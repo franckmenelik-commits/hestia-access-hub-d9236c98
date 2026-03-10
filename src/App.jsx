@@ -928,7 +928,7 @@ const Questionnaire = ({ lang, onComplete }) => {
 };
 
 // ── DASHBOARD ────────────────────────────────────────────────
-const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
+const Dashboard = ({ lang, user, answers, isPremium, onUpgrade, onLogout }) => {
   const [tab, setTab] = useState("matches");
   const [activeConv, setActiveConv] = useState(null);
   const [msgInput, setMsgInput] = useState("");
