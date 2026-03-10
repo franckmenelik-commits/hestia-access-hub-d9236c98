@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import heroImg from "./assets/hero-home.jpg";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 // ============================================================
 // STACK GRATUIT :
@@ -7,6 +8,7 @@ import heroImg from "./assets/hero-home.jpg";
 // - Stripe (paiements) -> stripe.com
 // - Resend (emails) -> resend.com
 // - Vercel (hébergement) -> vercel.com
+// - Mapbox GL JS (cartes) -> mapbox.com
 // Tous gratuits pour démarrer. 0$/mois.
 // ============================================================
 
@@ -71,6 +73,17 @@ const MOCK_USERS = [
     location: "République Dominicaine",
     avatar: "🌴",
     isPremium: true,
+    verified: true,
+    exchangeCount: 7,
+    trustScore: 92,
+    hestiaPoints: 480,
+    includeCar: true,
+    carType: "SUV Toyota RAV4",
+    reviews: [
+      { author: "Marie L.", rating: 5, text: "Hôte exceptionnel, maison magnifique !" },
+      { author: "Paul R.", rating: 4, text: "Très bon séjour, communication fluide." },
+    ],
+    coords: { lng: -69.9388, lat: 18.4861 },
     answers: {
       home_location: "americas",
       home_vibe: "nature",
@@ -89,6 +102,18 @@ const MOCK_USERS = [
     location: "Paris, France",
     avatar: "🗼",
     isPremium: true,
+    verified: true,
+    exchangeCount: 12,
+    trustScore: 97,
+    hestiaPoints: 720,
+    includeCar: false,
+    carType: "",
+    reviews: [
+      { author: "Sacha M.", rating: 5, text: "Appartement parfait, super emplacement." },
+      { author: "Yuki T.", rating: 5, text: "Décoration magnifique, hôtes adorables." },
+      { author: "Carlos V.", rating: 4, text: "Très propre, quartier génial." },
+    ],
+    coords: { lng: 2.3522, lat: 48.8566 },
     answers: {
       home_location: "europe",
       home_vibe: "chaleureux",
@@ -107,6 +132,16 @@ const MOCK_USERS = [
     location: "Barcelona, Espagne",
     avatar: "🌞",
     isPremium: false,
+    verified: false,
+    exchangeCount: 2,
+    trustScore: 68,
+    hestiaPoints: 120,
+    includeCar: true,
+    carType: "Citroën C3",
+    reviews: [
+      { author: "Léa B.", rating: 4, text: "Superbe terrasse, vue incroyable." },
+    ],
+    coords: { lng: 2.1734, lat: 41.3851 },
     answers: {
       home_location: "europe",
       home_vibe: "urbain",
@@ -125,6 +160,17 @@ const MOCK_USERS = [
     location: "Dakar, Sénégal",
     avatar: "🌍",
     isPremium: true,
+    verified: true,
+    exchangeCount: 5,
+    trustScore: 88,
+    hestiaPoints: 360,
+    includeCar: false,
+    carType: "",
+    reviews: [
+      { author: "Tom B.", rating: 5, text: "Accueil chaleureux, cuisine divine !" },
+      { author: "Carlos V.", rating: 5, text: "Meilleur échange de ma vie." },
+    ],
+    coords: { lng: -17.4677, lat: 14.7167 },
     answers: {
       home_location: "africa",
       home_vibe: "chaleureux",
@@ -143,6 +189,17 @@ const MOCK_USERS = [
     location: "Tokyo, Japon",
     avatar: "⛩️",
     isPremium: true,
+    verified: true,
+    exchangeCount: 9,
+    trustScore: 95,
+    hestiaPoints: 540,
+    includeCar: false,
+    carType: "",
+    reviews: [
+      { author: "Léa B.", rating: 5, text: "Minimalisme japonais parfait." },
+      { author: "Amara D.", rating: 5, text: "Très organisé, expérience unique." },
+    ],
+    coords: { lng: 139.6917, lat: 35.6895 },
     answers: {
       home_location: "asia",
       home_vibe: "design",
@@ -168,6 +225,13 @@ const MOCK_MESSAGES = {
     { from: "them", text: "Coucou, ton profil nous plaît beaucoup ! On cherche justement quelque chose pour août.", time: "Hier" },
   ],
 };
+
+// ── AI CONCIERGE SUGGESTIONS ─────────────────────────────────
+const AI_SUGGESTIONS = [
+  { id: "ai1", name: "Villa méditerranéenne", location: "Amalfi, Italie", emoji: "🏖️", reason: "Style de vie compatible" },
+  { id: "ai2", name: "Chalet alpin", location: "Chamonix, France", emoji: "🏔️", reason: "Rythme de voyage similaire" },
+  { id: "ai3", name: "Riad traditionnel", location: "Marrakech, Maroc", emoji: "🕌", reason: "Ambiance chaleureuse" },
+];
 
 // ── TRANSLATIONS ─────────────────────────────────────────────
 const T = {
@@ -260,6 +324,8 @@ const getQuestions = (lang) =>
         { id: "home_rules", category: "Tes règles", question: "Ce qui est non-négociable chez toi ?", subtitle: "Sélectionne tout ce qui s'applique", type: "multi", options: [{ value: "non_fumeur", label: "🚭 Non-fumeur" }, { value: "pas_animaux", label: "🐾 Pas d'animaux" }, { value: "animaux_ok", label: "🐕 Animaux bienvenus" }, { value: "pas_fete", label: "🔇 Pas de fêtes" }, { value: "enfants_ok", label: "👨‍👩‍👧 Familles bienvenues" }, { value: "pas_enfants", label: "🚫 Pas d'enfants" }] },
         { id: "travel_rhythm", category: "Ton rythme", question: "Combien de fois par an tu voyages ?", subtitle: "Pour calibrer tes opportunités", type: "select", options: [{ value: "1_2", label: "1–2 fois par an", desc: "Les grandes vacances" }, { value: "3_4", label: "3–4 fois par an", desc: "Un long + quelques courts" }, { value: "5_plus", label: "5 fois ou plus", desc: "Je voyage dès que je peux" }, { value: "nomade", label: "Quasi nomade", desc: "La maison est autant là-bas qu'ici" }] },
         { id: "match_priority", category: "Le match parfait", question: "Un bon match c'est avant tout...", subtitle: "Ce qui prime pour toi", type: "select", options: [{ value: "style_vie", label: "🌀 Un style de vie compatible" }, { value: "communication", label: "💬 Une communication fluide" }, { value: "destination", label: "📍 La bonne destination" }, { value: "confiance", label: "🔒 Un profil fiable & vérifié" }] },
+        // ── CAR SHARING STEP ──
+        { id: "include_car", category: "Voiture partagée", question: "Inclure ta voiture dans l'échange ?", subtitle: "Optionnel — un vrai plus pour certains voyageurs", type: "select", options: [{ value: "yes", label: "🚗 Oui, inclure ma voiture" }, { value: "no", label: "🚶 Non merci" }] },
       ]
     : [
         { id: "home_location", category: "Your home", question: "Where is your home?", subtitle: "The starting point of every swap", type: "select", options: [{ value: "americas", label: "🌎 Americas" }, { value: "europe", label: "🌍 Europe" }, { value: "africa", label: "🌍 Africa" }, { value: "asia", label: "🌏 Asia & Oceania" }] },
@@ -269,6 +335,8 @@ const getQuestions = (lang) =>
         { id: "home_rules", category: "Your rules", question: "What's non-negotiable at your place?", subtitle: "Select all that apply", type: "multi", options: [{ value: "non_fumeur", label: "🚭 No smoking" }, { value: "pas_animaux", label: "🐾 No pets" }, { value: "animaux_ok", label: "🐕 Pets welcome" }, { value: "pas_fete", label: "🔇 No parties" }, { value: "enfants_ok", label: "👨‍👩‍👧 Families welcome" }, { value: "pas_enfants", label: "🚫 No children" }] },
         { id: "travel_rhythm", category: "Your rhythm", question: "How often do you travel per year?", subtitle: "To calibrate your opportunities", type: "select", options: [{ value: "1_2", label: "1–2 times a year", desc: "Main holidays" }, { value: "3_4", label: "3–4 times a year", desc: "One long + a few short" }, { value: "5_plus", label: "5+ times a year", desc: "I travel whenever I can" }, { value: "nomade", label: "Almost nomadic", desc: "Home is as much there as here" }] },
         { id: "match_priority", category: "The perfect match", question: "A great match is above all...", subtitle: "What matters most to you", type: "select", options: [{ value: "style_vie", label: "🌀 A compatible lifestyle" }, { value: "communication", label: "💬 Smooth communication" }, { value: "destination", label: "📍 The right destination" }, { value: "confiance", label: "🔒 A verified, reliable profile" }] },
+        // ── CAR SHARING STEP ──
+        { id: "include_car", category: "Car sharing", question: "Include your car in the exchange?", subtitle: "Optional — a real plus for some travelers", type: "select", options: [{ value: "yes", label: "🚗 Yes, include my car" }, { value: "no", label: "🚶 No thanks" }] },
       ];
 
 // ── COMPONENTS ───────────────────────────────────────────────
@@ -286,6 +354,229 @@ const ScoreBadge = ({ score, large }) => {
 const Avatar = ({ emoji, size = "w-12 h-12" }) => (
   <div className={`${size} rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center text-xl flex-shrink-0`}>
     {emoji}
+  </div>
+);
+
+// ── HESTIA PASSPORT COMPONENT ────────────────────────────────
+const HestiaPassport = ({ user, lang }) => (
+  <div className="bg-white rounded-2xl shadow-soft p-5 border border-warm-100 mb-4">
+    <div className="flex items-center gap-2 mb-4">
+      <span className="font-serif text-base font-bold text-warm-800">🛂 Hestia Passport</span>
+    </div>
+    <div className="grid grid-cols-3 gap-3 mb-4">
+      <div className="bg-cream-light rounded-xl p-3 text-center border border-warm-100">
+        <p className="font-sans text-2xl font-bold text-terracotta">{user.trustScore || 75}</p>
+        <p className="font-sans text-[0.65rem] text-warm-400 uppercase tracking-wider mt-1">
+          {lang === "fr" ? "Score confiance" : "Trust score"}
+        </p>
+      </div>
+      <div className="bg-cream-light rounded-xl p-3 text-center border border-warm-100">
+        <p className="font-sans text-2xl font-bold text-sage-dark">{user.exchangeCount || 0}</p>
+        <p className="font-sans text-[0.65rem] text-warm-400 uppercase tracking-wider mt-1">
+          {lang === "fr" ? "Échanges" : "Exchanges"}
+        </p>
+      </div>
+      <div className="bg-cream-light rounded-xl p-3 text-center border border-warm-100">
+        {user.verified ? (
+          <p className="text-2xl">✅</p>
+        ) : (
+          <p className="text-2xl">⏳</p>
+        )}
+        <p className="font-sans text-[0.65rem] text-warm-400 uppercase tracking-wider mt-1">
+          {lang === "fr" ? "Vérifié" : "Verified"}
+        </p>
+      </div>
+    </div>
+    {/* Reviews */}
+    {user.reviews && user.reviews.length > 0 && (
+      <div>
+        <p className="font-sans text-xs text-warm-400 uppercase tracking-wider mb-2">
+          {lang === "fr" ? "Avis récents" : "Recent reviews"}
+        </p>
+        {user.reviews.slice(0, 2).map((r, i) => (
+          <div key={i} className="bg-cream-light rounded-xl p-3 mb-2 border border-warm-100">
+            <div className="flex justify-between items-center mb-1">
+              <span className="font-sans text-sm font-semibold text-warm-700">{r.author}</span>
+              <span className="font-sans text-xs text-terracotta">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>
+            </div>
+            <p className="font-sans text-sm text-warm-500">{r.text}</p>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+);
+
+// ── INSURANCE BADGE COMPONENT ────────────────────────────────
+const InsuranceBadge = ({ lang }) => (
+  <div className="flex items-center gap-2 bg-sage/10 border border-sage/25 rounded-xl px-3 py-2 mb-3">
+    <span className="text-sage-dark text-sm font-semibold font-sans">Échange protégé ✓</span>
+    <span className="text-warm-400 text-xs font-sans">— Couverture Safely incluse</span>
+  </div>
+);
+
+// ── HESTIA POINTS BADGE ──────────────────────────────────────
+const HestiaPointsBadge = ({ points }) => (
+  <div className="inline-flex items-center gap-1.5 bg-terracotta/8 border border-terracotta/20 rounded-full px-4 py-1.5">
+    <span className="font-sans font-bold text-sm text-terracotta">✦ {points} pts Hestia</span>
+  </div>
+);
+
+// ── APPROXIMATE MAP COMPONENT (MAPBOX GL JS) ─────────────────
+const MAPBOX_TOKEN = "pk.eyJ1IjoiaGVzdGlhLWFwcCIsImEiOiJjbHMwMDAwMDAwMDAwMDAwMDAwMDAwMDAifQ.placeholder";
+
+const ApproximateMap = ({ coords, isConfirmed }) => {
+  const mapContainer = useRef(null);
+  const mapRef = useRef(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapError, setMapError] = useState(false);
+
+  useEffect(() => {
+    if (!mapContainer.current || !coords || mapRef.current) return;
+
+    let cancelled = false;
+
+    const initMap = async () => {
+      try {
+        const mapboxgl = (await import("mapbox-gl")).default;
+        if (cancelled) return;
+
+        mapboxgl.accessToken = MAPBOX_TOKEN;
+
+        // Add random offset for approximate location (±0.01 degrees ≈ 1km)
+        const offset = isConfirmed ? 0 : 0.008;
+        const jitteredLng = coords.lng + (Math.random() - 0.5) * offset * 2;
+        const jitteredLat = coords.lat + (Math.random() - 0.5) * offset * 2;
+
+        const map = new mapboxgl.Map({
+          container: mapContainer.current,
+          style: "mapbox://styles/mapbox/light-v11",
+          center: [jitteredLng, jitteredLat],
+          zoom: isConfirmed ? 15 : 12,
+          interactive: true,
+          attributionControl: false,
+        });
+
+        mapRef.current = map;
+
+        map.on("load", () => {
+          if (cancelled) return;
+          setMapLoaded(true);
+
+          if (!isConfirmed) {
+            // Approximate circle
+            map.addSource("approx-area", {
+              type: "geojson",
+              data: {
+                type: "Feature",
+                geometry: {
+                  type: "Point",
+                  coordinates: [jitteredLng, jitteredLat],
+                },
+              },
+            });
+            map.addLayer({
+              id: "approx-circle",
+              type: "circle",
+              source: "approx-area",
+              paint: {
+                "circle-radius": 60,
+                "circle-color": "rgba(129, 178, 154, 0.25)",
+                "circle-stroke-color": "rgba(129, 178, 154, 0.5)",
+                "circle-stroke-width": 2,
+                "circle-blur": 0.6,
+              },
+            });
+          } else {
+            // Exact marker
+            new mapboxgl.Marker({ color: "#E07A5F" })
+              .setLngLat([coords.lng, coords.lat])
+              .addTo(map);
+          }
+        });
+
+        map.on("error", () => {
+          if (!cancelled) setMapError(true);
+        });
+      } catch {
+        if (!cancelled) setMapError(true);
+      }
+    };
+
+    initMap();
+
+    return () => {
+      cancelled = true;
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [coords, isConfirmed]);
+
+  if (!coords) return null;
+
+  if (mapError) {
+    return (
+      <div className="rounded-2xl overflow-hidden mb-4 border border-warm-100 bg-cream-light h-48 flex flex-col items-center justify-center">
+        <span className="text-3xl mb-2">🗺️</span>
+        <p className="font-sans text-warm-400 text-sm text-center px-4">
+          {isConfirmed ? "Localisation exacte disponible" : "Quartier approximatif — Localisation exacte après confirmation"}
+        </p>
+        <p className="font-sans text-warm-300 text-xs mt-1">
+          📍 {isConfirmed ? "Adresse exacte révélée" : "Zone approximative"}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl overflow-hidden mb-4 border border-warm-100 relative">
+      <div ref={mapContainer} className="h-48 w-full" />
+      {!isConfirmed && (
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 to-transparent px-4 py-3">
+          <p className="font-sans text-warm-500 text-xs flex items-center gap-1">
+            <span>📍</span> Localisation approximative — Adresse exacte après confirmation
+          </p>
+        </div>
+      )}
+      {isConfirmed && mapLoaded && (
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 to-transparent px-4 py-3">
+          <p className="font-sans text-sage-dark text-xs flex items-center gap-1">
+            <span>📍</span> Adresse exacte révélée ✓
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── AI CONCIERGE CARD ────────────────────────────────────────
+const AiConciergeCard = ({ lang }) => (
+  <div className="bg-gradient-to-br from-terracotta/5 to-sage/5 rounded-2xl shadow-soft p-5 mb-6 border border-terracotta/15">
+    <div className="flex items-center gap-2 mb-3">
+      <span className="text-lg">🤖</span>
+      <span className="font-serif text-base font-bold text-warm-800">AI Concierge</span>
+    </div>
+    <p className="font-sans text-warm-500 text-sm mb-4">
+      {lang === "fr"
+        ? "Basé sur votre profil, nous avons trouvé 3 maisons pour votre prochain voyage"
+        : "Based on your profile, we found 3 homes for your next trip"}
+    </p>
+    <div className="flex flex-col gap-2">
+      {AI_SUGGESTIONS.map((s) => (
+        <div key={s.id} className="bg-white rounded-xl p-3 border border-warm-100 flex items-center gap-3 hover:shadow-soft transition-shadow cursor-pointer">
+          <span className="text-2xl">{s.emoji}</span>
+          <div className="flex-1">
+            <p className="font-sans text-sm font-semibold text-warm-800">{s.name}</p>
+            <p className="font-sans text-xs text-warm-400">📍 {s.location}</p>
+          </div>
+          <span className="font-sans text-[0.6rem] text-sage-dark bg-sage/10 px-2 py-1 rounded-full border border-sage/20">
+            {s.reason}
+          </span>
+        </div>
+      ))}
+    </div>
   </div>
 );
 
@@ -476,12 +767,14 @@ const Questionnaire = ({ lang, onComplete }) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [otherText, setOtherText] = useState({});
+  const [carType, setCarType] = useState("");
 
   const questions = getQuestions(lang);
   const q = questions[step];
   const isMulti = q?.type === "multi";
   const selected = answers[q?.id];
   const canContinue = isMulti ? (selected?.length || 0) > 0 : !!selected;
+  const isCarStep = q?.id === "include_car";
 
   const handleSelect = (value) => {
     if (isMulti) {
@@ -512,7 +805,7 @@ const Questionnaire = ({ lang, onComplete }) => {
         <h2 className="font-serif text-2xl md:text-3xl font-bold text-warm-900 mb-2">{q.question}</h2>
         <p className="font-sans text-warm-400 text-sm mb-7">{q.subtitle}</p>
 
-        <div className={`${isMulti ? "grid grid-cols-2" : "flex flex-col"} gap-2.5 mb-6`}>
+        <div className={`${isMulti ? "grid grid-cols-2" : "flex flex-col"} gap-2.5 mb-4`}>
           {q.options.map((opt) => {
             const sel = isMulti ? (selected || []).includes(opt.value) : selected === opt.value;
             return (
@@ -532,15 +825,25 @@ const Questionnaire = ({ lang, onComplete }) => {
               </button>
             );
           })}
+        </div>
 
-          <div className={isMulti ? "col-span-2" : ""}>
-            <input
-              className="w-full px-4 py-3 rounded-xl border border-warm-200 bg-white text-warm-700 font-sans text-sm outline-none focus:border-terracotta/50 transition-all"
-              placeholder={lang === "fr" ? "✏️ Autre chose à préciser ? (optionnel)" : "✏️ Anything else to add? (optional)"}
-              value={otherText[q.id] || ""}
-              onChange={(e) => setOtherText({ ...otherText, [q.id]: e.target.value })}
-            />
-          </div>
+        {/* Car type field — shown if user selected "yes" on car step */}
+        {isCarStep && selected === "yes" && (
+          <input
+            className="w-full px-4 py-3 rounded-xl border border-warm-200 bg-white text-warm-700 font-sans text-sm outline-none focus:border-terracotta/50 transition-all mb-4"
+            placeholder={lang === "fr" ? "🚗 Type de voiture (ex: Renault Clio, Tesla Model 3...)" : "🚗 Car type (e.g. Honda Civic, Tesla Model 3...)"}
+            value={carType}
+            onChange={(e) => setCarType(e.target.value)}
+          />
+        )}
+
+        <div className={isMulti ? "col-span-2 mb-6" : "mb-6"}>
+          <input
+            className="w-full px-4 py-3 rounded-xl border border-warm-200 bg-white text-warm-700 font-sans text-sm outline-none focus:border-terracotta/50 transition-all"
+            placeholder={lang === "fr" ? "✏️ Autre chose à préciser ? (optionnel)" : "✏️ Anything else to add? (optional)"}
+            value={otherText[q.id] || ""}
+            onChange={(e) => setOtherText({ ...otherText, [q.id]: e.target.value })}
+          />
         </div>
 
         <button
@@ -550,7 +853,7 @@ const Questionnaire = ({ lang, onComplete }) => {
           onClick={() => {
             if (!canContinue) return;
             if (step < questions.length - 1) setStep((s) => s + 1);
-            else onComplete(answers);
+            else onComplete({ ...answers, car_type: carType });
           }}
         >
           {step === questions.length - 1
@@ -583,7 +886,10 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
   const [conversations, setConversations] = useState(MOCK_MESSAGES);
   const [confirmedExchanges, setConfirmedExchanges] = useState([]);
   const [isAdmin] = useState(user.email === "admin@hestia.app");
+  const [selectedProfile, setSelectedProfile] = useState(null);
   const t = T[lang];
+
+  const userPoints = 240;
 
   const matches = MOCK_USERS.map((u) => ({
     ...u,
@@ -615,6 +921,7 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
       <div className="px-5 py-4 border-b border-warm-100 bg-white/80 backdrop-blur-sm flex justify-between items-center sticky top-0 z-50">
         <span className="font-serif text-base tracking-widest text-warm-800 italic">HESTIA</span>
         <div className="flex items-center gap-3">
+          <HestiaPointsBadge points={userPoints} />
           {isPremium && (
             <span className="text-xs tracking-[0.15em] uppercase text-terracotta font-sans font-medium bg-terracotta/8 px-3 py-1.5 rounded-full border border-terracotta/20">
               ✦ MEMBER
@@ -629,7 +936,7 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
         {navItems.map((n) => (
           <button
             key={n.id}
-            onClick={() => { setTab(n.id); if (n.id !== "messages") setActiveConv(null); }}
+            onClick={() => { setTab(n.id); if (n.id !== "messages") setActiveConv(null); setSelectedProfile(null); }}
             className="flex-1 py-3 flex flex-col items-center gap-1 bg-transparent border-none cursor-pointer transition-colors"
           >
             <span className="text-base">{n.icon}</span>
@@ -644,8 +951,11 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
       <div className="flex-1 px-5 pb-24 pt-6 max-w-2xl w-full mx-auto">
 
         {/* ── MATCHES TAB ── */}
-        {tab === "matches" && (
+        {tab === "matches" && !selectedProfile && (
           <div>
+            {/* AI Concierge Card */}
+            <AiConciergeCard lang={lang} />
+
             <p className="text-xs tracking-[0.2em] uppercase text-terracotta font-sans font-medium mb-5">
               {matches.length} {lang === "fr" ? "matchs trouvés" : "matches found"}
             </p>
@@ -653,15 +963,16 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
             {matches.map((m, i) => (
               <div
                 key={m.id}
-                className={`bg-white rounded-2xl shadow-soft p-5 mb-4 relative overflow-hidden border transition-shadow hover:shadow-card ${
+                className={`bg-white rounded-2xl shadow-soft p-5 mb-4 relative overflow-hidden border transition-shadow hover:shadow-card cursor-pointer ${
                   i === 0 ? "border-terracotta/20" : "border-warm-100"
                 }`}
+                onClick={() => (isPremium || i < 2) && setSelectedProfile(m)}
               >
                 {!isPremium && i >= 2 && (
                   <div className="absolute inset-0 backdrop-blur-md bg-cream-light/70 flex flex-col items-center justify-center z-10 rounded-2xl">
                     <span className="text-2xl mb-2">🔒</span>
                     <p className="font-sans text-warm-500 text-sm text-center mb-4 px-6">{t.free_blur}</p>
-                    <button className="bg-terracotta text-white font-sans font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-terracotta-dark transition-all" onClick={onUpgrade}>
+                    <button className="bg-terracotta text-white font-sans font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-terracotta-dark transition-all" onClick={(e) => { e.stopPropagation(); onUpgrade(); }}>
                       {t.upgrade}
                     </button>
                   </div>
@@ -671,25 +982,32 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
                   <Avatar emoji={m.avatar} size="w-14 h-14" />
                   <div className="flex-1">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="font-serif text-lg font-semibold text-warm-800">{m.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-serif text-lg font-semibold text-warm-800">{m.name}</span>
+                        {m.verified && <span className="text-xs bg-sage/15 text-sage-dark px-2 py-0.5 rounded-full border border-sage/20 font-sans font-medium">✅ Vérifié</span>}
+                      </div>
                       <ScoreBadge score={m.score} />
                     </div>
-                    <p className="font-sans text-warm-400 text-sm mb-2">📍 {m.location}</p>
-                    <p className="font-sans text-warm-600 text-sm leading-relaxed mb-3">{m.bio}</p>
-                    <div className="flex gap-2 flex-wrap">
+                    <p className="font-sans text-warm-400 text-sm mb-1">📍 {m.location}</p>
+                    <p className="font-sans text-warm-600 text-sm leading-relaxed mb-2">{m.bio}</p>
+                    {m.includeCar && (
+                      <span className="inline-flex items-center gap-1 font-sans text-xs text-warm-500 bg-cream rounded-full px-2.5 py-1 border border-warm-100 mb-2">
+                        🚗 {m.carType}
+                      </span>
+                    )}
+                    <div className="flex gap-2 flex-wrap items-center">
                       {(isPremium || i < 2) && (
                         <button
                           className="font-sans text-sm text-warm-600 border border-warm-200 px-4 py-2 rounded-xl hover:bg-cream transition-colors"
-                          onClick={() => { setTab("messages"); setActiveConv(m.id); }}
+                          onClick={(e) => { e.stopPropagation(); setTab("messages"); setActiveConv(m.id); }}
                         >
                           💬 {lang === "fr" ? "Écrire" : "Message"}
                         </button>
                       )}
-                      {m.isPremium && (
-                        <span className="text-xs tracking-[0.15em] uppercase text-sage-dark font-sans font-medium bg-sage/10 px-3 py-2 rounded-xl border border-sage/20">
-                          ✦ Vérifié
-                        </span>
-                      )}
+                      <span className="font-sans text-xs text-warm-400">
+                        🔄 {m.exchangeCount} {lang === "fr" ? "échanges" : "exchanges"}
+                      </span>
+                      <HestiaPointsBadge points={m.hestiaPoints} />
                     </div>
                   </div>
                 </div>
@@ -711,6 +1029,65 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
                 </button>
               </div>
             )}
+          </div>
+        )}
+
+        {/* ── SELECTED PROFILE DETAIL ── */}
+        {tab === "matches" && selectedProfile && (
+          <div>
+            <button
+              className="font-sans text-sm text-warm-500 border border-warm-200 px-3 py-2 rounded-xl bg-white hover:bg-cream transition-colors mb-4"
+              onClick={() => setSelectedProfile(null)}
+            >
+              ← {lang === "fr" ? "Retour aux matchs" : "Back to matches"}
+            </button>
+
+            <div className="bg-white rounded-2xl shadow-card p-6 border border-warm-100 mb-4">
+              <div className="flex gap-4 items-center mb-4">
+                <Avatar emoji={selectedProfile.avatar} size="w-16 h-16" />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-serif text-xl font-bold text-warm-800">{selectedProfile.name}</span>
+                    {selectedProfile.verified && <span className="text-xs bg-sage/15 text-sage-dark px-2 py-0.5 rounded-full border border-sage/20">✅</span>}
+                  </div>
+                  <p className="font-sans text-warm-400 text-sm">📍 {selectedProfile.location}</p>
+                </div>
+                <div className="ml-auto">
+                  <ScoreBadge score={selectedProfile.score} large />
+                </div>
+              </div>
+              <p className="font-sans text-warm-600 text-sm leading-relaxed mb-4">{selectedProfile.bio}</p>
+              {selectedProfile.includeCar && (
+                <div className="flex items-center gap-2 bg-cream-light rounded-xl p-3 border border-warm-100 mb-4">
+                  <span className="text-lg">🚗</span>
+                  <div>
+                    <p className="font-sans text-sm font-semibold text-warm-700">{lang === "fr" ? "Voiture incluse" : "Car included"}</p>
+                    <p className="font-sans text-xs text-warm-400">{selectedProfile.carType}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Approximate Map */}
+            <ApproximateMap coords={selectedProfile.coords} isConfirmed={confirmedExchanges.includes(selectedProfile.id)} />
+
+            {/* Hestia Passport */}
+            <HestiaPassport user={selectedProfile} lang={lang} />
+
+            <div className="flex gap-2">
+              <button
+                className="flex-1 bg-terracotta text-white font-sans font-semibold text-sm py-3 rounded-xl hover:bg-terracotta-dark transition-all"
+                onClick={() => { setTab("messages"); setActiveConv(selectedProfile.id); setSelectedProfile(null); }}
+              >
+                💬 {lang === "fr" ? "Écrire" : "Message"}
+              </button>
+              <button
+                className="flex-1 font-sans text-sm text-warm-600 border border-warm-200 py-3 rounded-xl hover:bg-cream transition-colors"
+                onClick={() => { confirmExchange(selectedProfile.id); }}
+              >
+                {t.propose}
+              </button>
+            </div>
           </div>
         )}
 
@@ -789,6 +1166,9 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
                 )}
               </div>
 
+              {/* Insurance badge on confirmed exchanges */}
+              {isConfirmed && <InsuranceBadge lang={lang} />}
+
               <div className="flex-1 overflow-y-auto flex flex-col gap-3 pb-4">
                 {msgs.map((msg, i) => (
                   <div key={i} className={`flex ${msg.from === "me" ? "justify-end" : "justify-start"}`}>
@@ -852,6 +1232,7 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
                 if (!u) return null;
                 return (
                   <div key={uid} className="bg-white rounded-2xl shadow-soft p-5 mb-3 border border-sage/20">
+                    <InsuranceBadge lang={lang} />
                     <div className="flex gap-3 items-center">
                       <Avatar emoji={u.avatar} size="w-12 h-12" />
                       <div>
@@ -866,6 +1247,25 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
                 );
               })
             )}
+
+            {/* Non-simultaneous exchange points info */}
+            <div className="bg-gradient-to-br from-terracotta/5 to-sage/5 rounded-2xl p-5 mt-4 border border-terracotta/15">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg">✦</span>
+                <span className="font-serif text-base font-bold text-warm-800">Hestia Points</span>
+              </div>
+              <p className="font-sans text-warm-500 text-sm mb-3">
+                {lang === "fr"
+                  ? "Pas de match simultané ? Accueillez un voyageur et gagnez des points pour voyager plus tard."
+                  : "No simultaneous match? Host a traveler and earn points to travel later."}
+              </p>
+              <div className="flex items-center gap-3">
+                <HestiaPointsBadge points={userPoints} />
+                <span className="font-sans text-xs text-warm-400">
+                  {lang === "fr" ? "= 1 nuit d'échange" : "= 1 exchange night"}
+                </span>
+              </div>
+            </div>
           </div>
         )}
 
@@ -875,10 +1275,13 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
             <p className="text-xs tracking-[0.2em] uppercase text-terracotta font-sans font-medium mb-5">{t.nav_profile}</p>
 
             <div className="bg-white rounded-2xl shadow-soft p-6 mb-4 border border-warm-100">
-              <div className="flex gap-4 items-center mb-6">
+              <div className="flex gap-4 items-center mb-4">
                 <Avatar emoji="👤" size="w-16 h-16" />
                 <div>
-                  <div className="font-serif text-xl font-bold text-warm-800 mb-1">{user.name}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-serif text-xl font-bold text-warm-800">{user.name}</span>
+                    <span className="text-xs bg-sage/15 text-sage-dark px-2 py-0.5 rounded-full border border-sage/20">✅</span>
+                  </div>
                   <div className="font-sans text-warm-400 text-sm">{user.email}</div>
                   {isPremium && (
                     <span className="text-xs tracking-[0.15em] uppercase text-terracotta font-sans font-medium mt-1 inline-block">✦ Member</span>
@@ -886,8 +1289,25 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
                 </div>
               </div>
 
+              {/* Points display */}
+              <div className="flex items-center gap-3 mb-4">
+                <HestiaPointsBadge points={userPoints} />
+              </div>
+
+              {/* Car info */}
+              {answers.include_car === "yes" && (
+                <div className="flex items-center gap-2 bg-cream-light rounded-xl p-3 border border-warm-100 mb-4">
+                  <span className="text-lg">🚗</span>
+                  <div>
+                    <p className="font-sans text-sm font-semibold text-warm-700">{lang === "fr" ? "Voiture incluse" : "Car included"}</p>
+                    <p className="font-sans text-xs text-warm-400">{answers.car_type || (lang === "fr" ? "Type non précisé" : "Type not specified")}</p>
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-3">
                 {Object.entries(answers)
+                  .filter(([k]) => !["include_car", "car_type"].includes(k))
                   .slice(0, 4)
                   .map(([k, v]) => (
                     <div key={k} className="bg-cream-light rounded-xl p-3 border border-warm-100">
@@ -901,6 +1321,9 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
                   ))}
               </div>
             </div>
+
+            {/* Hestia Passport for own profile */}
+            <HestiaPassport user={{ trustScore: 75, exchangeCount: 0, verified: true, reviews: [] }} lang={lang} />
 
             {!isPremium && (
               <div className="bg-white rounded-2xl shadow-soft p-6 text-center border border-terracotta/20">
