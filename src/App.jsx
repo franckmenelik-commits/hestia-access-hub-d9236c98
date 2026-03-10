@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import heroImg from "./assets/hero-home.jpg";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { supabase } from "./lib/supabase.js";
 
 // ============================================================
 // STACK GRATUIT :
@@ -705,11 +706,48 @@ const LandingPage = ({ lang, setLang, onStart }) => {
   );
 };
 
-// ── AUTH PAGE ────────────────────────────────────────────────
+// ── AUTH PAGE (SUPABASE) ─────────────────────────────────────
 const AuthPage = ({ lang, onAuth }) => {
   const [isLogin, setIsLogin] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      if (isLogin) {
+        const { data, error: err } = await supabase.auth.signInWithPassword({ email, password });
+        if (err) throw err;
+        // onAuth will be triggered by onAuthStateChange in HestiaApp
+      } else {
+        if (!name.trim()) { setError(lang === "fr" ? "Prénom requis" : "Name required"); setLoading(false); return; }
+        const { data, error: err } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { name } },
+        });
+        if (err) throw err;
+        // Create profile in users table
+        if (data.user) {
+          await supabase.from("users").upsert({
+            id: data.user.id,
+            email,
+            name,
+            is_premium: false,
+            hestia_points: 0,
+          });
+        }
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-cream-light flex items-center justify-center px-5">
@@ -722,6 +760,11 @@ const AuthPage = ({ lang, onAuth }) => {
         </div>
 
         <div className="bg-white rounded-3xl shadow-card p-8 border border-warm-100">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 mb-4 font-sans text-sm">
+              {error}
+            </div>
+          )}
           {!isLogin && (
             <input
               className="w-full px-4 py-3.5 rounded-xl border border-warm-200 bg-cream-light/50 text-warm-800 font-sans text-sm outline-none focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 transition-all mb-3"
@@ -741,16 +784,22 @@ const AuthPage = ({ lang, onAuth }) => {
             className="w-full px-4 py-3.5 rounded-xl border border-warm-200 bg-cream-light/50 text-warm-800 font-sans text-sm outline-none focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 transition-all mb-6"
             placeholder={lang === "fr" ? "Mot de passe" : "Password"}
             type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           />
           <button
-            className="w-full bg-terracotta text-white font-sans font-semibold text-sm py-3.5 rounded-xl hover:bg-terracotta-dark hover:shadow-soft transition-all duration-300 active:scale-[0.98]"
-            onClick={() => onAuth(name || "Vous", email)}
+            className="w-full bg-terracotta text-white font-sans font-semibold text-sm py-3.5 rounded-xl hover:bg-terracotta-dark hover:shadow-soft transition-all duration-300 active:scale-[0.98] disabled:opacity-50"
+            onClick={handleSubmit}
+            disabled={loading}
           >
-            {isLogin ? (lang === "fr" ? "Se connecter" : "Log in") : (lang === "fr" ? "Créer mon compte" : "Create account")}
+            {loading
+              ? "..."
+              : isLogin ? (lang === "fr" ? "Se connecter" : "Log in") : (lang === "fr" ? "Créer mon compte" : "Create account")}
           </button>
           <p
             className="font-sans text-warm-400 text-sm text-center mt-5 cursor-pointer hover:text-terracotta transition-colors"
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => { setIsLogin(!isLogin); setError(""); }}
           >
             {isLogin
               ? (lang === "fr" ? "Pas encore de compte ? Créer un profil" : "No account? Create one")
@@ -879,7 +928,7 @@ const Questionnaire = ({ lang, onComplete }) => {
 };
 
 // ── DASHBOARD ────────────────────────────────────────────────
-const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
+const Dashboard = ({ lang, user, answers, isPremium, onUpgrade, onLogout }) => {
   const [tab, setTab] = useState("matches");
   const [activeConv, setActiveConv] = useState(null);
   const [msgInput, setMsgInput] = useState("");
@@ -928,6 +977,12 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
             </span>
           )}
           <Avatar emoji="👤" size="w-9 h-9" />
+          <button
+            onClick={onLogout}
+            className="font-sans text-xs text-warm-500 border border-warm-200 px-3 py-1.5 rounded-xl hover:bg-cream hover:text-terracotta transition-colors"
+          >
+            {lang === "fr" ? "Déconnexion" : "Logout"}
+          </button>
         </div>
       </div>
 
@@ -1382,15 +1437,52 @@ export default function HestiaApp() {
   const [user, setUser] = useState(null);
   const [answers, setAnswers] = useState({});
   const [isPremium, setIsPremium] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleAuth = (name, email) => {
-    setUser({ name, email });
-    setScreen("onboarding");
-  };
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        const meta = session.user.user_metadata;
+        const u = { name: meta?.name || "Vous", email: session.user.email };
+        setUser(u);
+
+        const { data: profile } = await supabase
+          .from("users")
+          .select("is_premium, hestia_points, name")
+          .eq("id", session.user.id)
+          .single();
+
+        if (profile) {
+          setIsPremium(profile.is_premium || false);
+          setUser((prev) => ({ ...prev, name: profile.name || prev.name }));
+        }
+
+        setScreen((prev) => (prev === "landing" || prev === "auth") ? "onboarding" : prev);
+      } else {
+        setUser(null);
+        setScreen("landing");
+      }
+      setLoading(false);
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleComplete = (ans) => {
     setAnswers(ans);
     setScreen("dashboard");
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setAnswers({});
+    setIsPremium(false);
+    setScreen("landing");
   };
 
   const handleUpgrade = async () => {
@@ -1410,12 +1502,20 @@ export default function HestiaApp() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-cream-light flex items-center justify-center">
+        <span className="font-serif text-xl tracking-widest text-warm-800 italic animate-pulse">HESTIA</span>
+      </div>
+    );
+  }
+
   return (
     <div>
       {screen === "landing" && (
         <LandingPage lang={lang} setLang={setLang} onStart={() => setScreen("auth")} />
       )}
-      {screen === "auth" && <AuthPage lang={lang} onAuth={handleAuth} />}
+      {screen === "auth" && <AuthPage lang={lang} onAuth={() => {}} />}
       {screen === "onboarding" && <Questionnaire lang={lang} onComplete={handleComplete} />}
       {screen === "dashboard" && (
         <Dashboard
@@ -1424,6 +1524,7 @@ export default function HestiaApp() {
           answers={answers}
           isPremium={isPremium}
           onUpgrade={handleUpgrade}
+          onLogout={handleLogout}
         />
       )}
     </div>
