@@ -1,4 +1,5 @@
 import { useState } from "react";
+import heroImg from "./assets/hero-home.jpg";
 
 // ============================================================
 // STACK GRATUIT :
@@ -31,9 +32,7 @@ const redactContact = (text) => {
 // ── MATCHING ENGINE ─────────────────────────────────────────
 const computeScore = (a, b) => {
   let score = 0;
-
   if (a.home_location !== b.home_location) score += 30;
-
   const vibeCompat = {
     design: ["design", "nature"],
     chaleureux: ["chaleureux", "urbain"],
@@ -43,9 +42,7 @@ const computeScore = (a, b) => {
     minimal: ["minimal", "nature"],
     urban: ["cozy", "urban"],
   };
-
   if (vibeCompat[a.home_vibe]?.includes(b.home_vibe)) score += 20;
-
   if (
     (a.hosting_style === "precis" && b.guest_behavior === "respectueux") ||
     (a.hosting_style === "flexible" && b.guest_behavior === "naturel") ||
@@ -53,21 +50,16 @@ const computeScore = (a, b) => {
   ) {
     score += 25;
   }
-
   const aRules = a.home_rules || [];
   const bRules = b.home_rules || [];
-
   const incompatible =
     (aRules.includes("pas_animaux") && bRules.includes("animaux_ok")) ||
     (bRules.includes("pas_animaux") && aRules.includes("animaux_ok")) ||
     (aRules.includes("pas_enfants") && bRules.includes("enfants_ok")) ||
     (bRules.includes("pas_enfants") && aRules.includes("enfants_ok"));
-
   if (!incompatible) score += 15;
   else score -= 30;
-
   if (a.travel_rhythm === b.travel_rhythm) score += 10;
-
   return Math.min(99, Math.max(40, score));
 };
 
@@ -167,34 +159,13 @@ const MOCK_USERS = [
 
 const MOCK_MESSAGES = {
   u1: [
-    {
-      from: "them",
-      text: "Bonjour ! J'ai vu ton profil et je pense qu'on serait un excellent match. Ma maison en RD est dispo en juillet.",
-      time: "10:32",
-    },
-    {
-      from: "me",
-      text: "Super ! Montréal serait parfait pour vous en juillet, il fait beau. C'est un chalet à 45 min de la ville.",
-      time: "10:45",
-    },
-    {
-      from: "them",
-      text: "On peut s'échanger nos numéros pour continuer ?",
-      time: "10:47",
-    },
-    {
-      from: "them",
-      text: "Mon whatsapp c'est +1 809 XXXXXXX",
-      time: "10:48",
-      redacted: true,
-    },
+    { from: "them", text: "Bonjour ! J'ai vu ton profil et je pense qu'on serait un excellent match. Ma maison en RD est dispo en juillet.", time: "10:32" },
+    { from: "me", text: "Super ! Montréal serait parfait pour vous en juillet, il fait beau. C'est un chalet à 45 min de la ville.", time: "10:45" },
+    { from: "them", text: "On peut s'échanger nos numéros pour continuer ?", time: "10:47" },
+    { from: "them", text: "Mon whatsapp c'est +1 809 XXXXXXX", time: "10:48", redacted: true },
   ],
   u2: [
-    {
-      from: "them",
-      text: "Coucou, ton profil nous plaît beaucoup ! On cherche justement quelque chose pour août.",
-      time: "Hier",
-    },
+    { from: "them", text: "Coucou, ton profil nous plaît beaucoup ! On cherche justement quelque chose pour août.", time: "Hier" },
   ],
 };
 
@@ -209,37 +180,20 @@ const T = {
     free_label: "Gratuit",
     free_price: "0€",
     free_desc: "Pour toujours",
-    free_f: [
-      "Créer un profil",
-      "Voir vos matchs (score visible)",
-      "1 aperçu de message",
-    ],
+    free_f: ["Créer un profil", "Voir vos matchs (score visible)", "1 aperçu de message"],
     member_label: "Member",
     member_price: "99€",
     member_desc: "par an",
-    member_f: [
-      "Tout le gratuit",
-      "Messagerie complète",
-      "3 échanges / an",
-      "Badge vérifié",
-    ],
+    member_f: ["Tout le gratuit", "Messagerie complète", "3 échanges / an", "Badge vérifié"],
     premium_label: "Premium",
     premium_price: "199€",
     premium_desc: "par an",
-    premium_f: [
-      "Tout Member",
-      "Matchs prioritaires",
-      "Échanges illimités",
-      "Support dédié",
-    ],
+    premium_f: ["Tout Member", "Matchs prioritaires", "Échanges illimités", "Support dédié"],
     start: "Commencer",
     anti_title: "Pourquoi passer par Hestia ?",
-    anti_1:
-      "Les contacts sont masqués jusqu'à la confirmation d'échange sur la plateforme.",
-    anti_2:
-      "Chaque échange confirmé génère un code de protection des deux côtés.",
-    anti_3:
-      "Les avis ne peuvent être laissés qu'après un échange vérifié.",
+    anti_1: "Les contacts sont masqués jusqu'à la confirmation d'échange sur la plateforme.",
+    anti_2: "Chaque échange confirmé génère un code de protection des deux côtés.",
+    anti_3: "Les avis ne peuvent être laissés qu'après un échange vérifié.",
     nav_matches: "Mes matchs",
     nav_messages: "Messages",
     nav_profile: "Mon profil",
@@ -249,8 +203,7 @@ const T = {
     upgrade: "Passer en Member — 99€/an",
     confirm_exchange: "Confirmer l'échange",
     exchange_confirmed: "Échange confirmé ✓ — Contacts révélés",
-    redacted_notice:
-      "Ce message contenait des coordonnées. Confirmez l'échange pour les voir.",
+    redacted_notice: "Ce message contenait des coordonnées. Confirmez l'échange pour les voir.",
     propose: "Proposer un échange",
     send: "Envoyer",
     type_msg: "Votre message...",
@@ -265,37 +218,20 @@ const T = {
     free_label: "Free",
     free_price: "$0",
     free_desc: "Forever",
-    free_f: [
-      "Create a profile",
-      "See your matches (score visible)",
-      "1 message preview",
-    ],
+    free_f: ["Create a profile", "See your matches (score visible)", "1 message preview"],
     member_label: "Member",
     member_price: "$99",
     member_desc: "per year",
-    member_f: [
-      "Everything in Free",
-      "Full messaging",
-      "3 exchanges / year",
-      "Verified badge",
-    ],
+    member_f: ["Everything in Free", "Full messaging", "3 exchanges / year", "Verified badge"],
     premium_label: "Premium",
     premium_price: "$199",
     premium_desc: "per year",
-    premium_f: [
-      "Everything in Member",
-      "Priority matching",
-      "Unlimited exchanges",
-      "Dedicated support",
-    ],
+    premium_f: ["Everything in Member", "Priority matching", "Unlimited exchanges", "Dedicated support"],
     start: "Get started",
     anti_title: "Why keep it on Hestia?",
-    anti_1:
-      "Contact info is hidden until both parties confirm the exchange on the platform.",
-    anti_2:
-      "Every confirmed exchange generates a protection code for both sides.",
-    anti_3:
-      "Reviews can only be left after a verified exchange.",
+    anti_1: "Contact info is hidden until both parties confirm the exchange on the platform.",
+    anti_2: "Every confirmed exchange generates a protection code for both sides.",
+    anti_3: "Reviews can only be left after a verified exchange.",
     nav_matches: "My matches",
     nav_messages: "Messages",
     nav_profile: "My profile",
@@ -305,8 +241,7 @@ const T = {
     upgrade: "Upgrade to Member — $99/year",
     confirm_exchange: "Confirm exchange",
     exchange_confirmed: "Exchange confirmed ✓ — Contacts revealed",
-    redacted_notice:
-      "This message contained contact info. Confirm the exchange to reveal it.",
+    redacted_notice: "This message contained contact info. Confirm the exchange to reveal it.",
     propose: "Propose an exchange",
     send: "Send",
     type_msg: "Your message...",
@@ -318,494 +253,38 @@ const T = {
 const getQuestions = (lang) =>
   lang === "fr"
     ? [
-        {
-          id: "home_location",
-          category: "Ta maison",
-          question: "Où se trouve ta maison ?",
-          subtitle: "Le point de départ de tout échange",
-          type: "select",
-          options: [
-            { value: "americas", label: "🌎 Amériques" },
-            { value: "europe", label: "🌍 Europe" },
-            { value: "africa", label: "🌍 Afrique" },
-            { value: "asia", label: "🌏 Asie & Océanie" },
-          ],
-        },
-        {
-          id: "home_vibe",
-          category: "L'âme de ta maison",
-          question: "Comment tu décrirais ton espace ?",
-          subtitle: "Choisis ce qui lui ressemble le mieux",
-          type: "select",
-          options: [
-            {
-              value: "design",
-              label: "✦ Épuré & design",
-              desc: "Chaque objet a sa place",
-            },
-            {
-              value: "chaleureux",
-              label: "☕ Chaleureux & vivant",
-              desc: "Des livres, des plantes, une cuisine qui sent bon",
-            },
-            {
-              value: "nature",
-              label: "🌿 Nature & calme",
-              desc: "Jardin, lumière naturelle, loin du bruit",
-            },
-            {
-              value: "urbain",
-              label: "⚡ Urbain & dynamique",
-              desc: "En plein cœur de la ville",
-            },
-          ],
-        },
-        {
-          id: "hosting_style",
-          category: "Toi comme hôte",
-          question: "Quel type d'hôte tu es ?",
-          subtitle: "Sois honnête",
-          type: "select",
-          options: [
-            {
-              value: "guide",
-              label: "🗺️ Le guide local",
-              desc: "Je prépare un carnet d'adresses secrètes",
-            },
-            {
-              value: "discret",
-              label: "🔑 Le discret bienveillant",
-              desc: "Je laisse les clés et fais confiance",
-            },
-            {
-              value: "precis",
-              label: "📋 Le précis & organisé",
-              desc: "J'ai des règles claires à respecter",
-            },
-            {
-              value: "flexible",
-              label: "🌊 Le flexible",
-              desc: "Installe-toi comme chez toi, vraiment",
-            },
-          ],
-        },
-        {
-          id: "guest_behavior",
-          category: "Toi comme invité",
-          question: "Dans une maison qui n'est pas la tienne, tu es...",
-          subtitle: "La vraie question de compatibilité",
-          type: "select",
-          options: [
-            {
-              value: "respectueux",
-              label: "🧘 Ultra respectueux",
-              desc: "Je laisse tout comme je l'ai trouvé",
-            },
-            {
-              value: "naturel",
-              label: "🏡 Naturel & à l'aise",
-              desc: "Je vis normalement et range bien avant de partir",
-            },
-            {
-              value: "curieux",
-              label: "🔍 Curieux & attentionné",
-              desc: "J'essaie de comprendre leur façon de vivre",
-            },
-            {
-              value: "social",
-              label: "💬 Social",
-              desc: "J'aime rester en contact avec les hôtes",
-            },
-          ],
-        },
-        {
-          id: "home_rules",
-          category: "Tes règles",
-          question: "Ce qui est non-négociable chez toi ?",
-          subtitle: "Sélectionne tout ce qui s'applique",
-          type: "multi",
-          options: [
-            { value: "non_fumeur", label: "🚭 Non-fumeur" },
-            { value: "pas_animaux", label: "🐾 Pas d'animaux" },
-            { value: "animaux_ok", label: "🐕 Animaux bienvenus" },
-            { value: "pas_fete", label: "🔇 Pas de fêtes" },
-            { value: "enfants_ok", label: "👨‍👩‍👧 Familles bienvenues" },
-            { value: "pas_enfants", label: "🚫 Pas d'enfants" },
-          ],
-        },
-        {
-          id: "travel_rhythm",
-          category: "Ton rythme",
-          question: "Combien de fois par an tu voyages ?",
-          subtitle: "Pour calibrer tes opportunités",
-          type: "select",
-          options: [
-            {
-              value: "1_2",
-              label: "1–2 fois par an",
-              desc: "Les grandes vacances",
-            },
-            {
-              value: "3_4",
-              label: "3–4 fois par an",
-              desc: "Un long + quelques courts",
-            },
-            {
-              value: "5_plus",
-              label: "5 fois ou plus",
-              desc: "Je voyage dès que je peux",
-            },
-            {
-              value: "nomade",
-              label: "Quasi nomade",
-              desc: "La maison est autant là-bas qu'ici",
-            },
-          ],
-        },
-        {
-          id: "match_priority",
-          category: "Le match parfait",
-          question: "Un bon match c'est avant tout...",
-          subtitle: "Ce qui prime pour toi",
-          type: "select",
-          options: [
-            { value: "style_vie", label: "🌀 Un style de vie compatible" },
-            { value: "communication", label: "💬 Une communication fluide" },
-            { value: "destination", label: "📍 La bonne destination" },
-            { value: "confiance", label: "🔒 Un profil fiable & vérifié" },
-          ],
-        },
+        { id: "home_location", category: "Ta maison", question: "Où se trouve ta maison ?", subtitle: "Le point de départ de tout échange", type: "select", options: [{ value: "americas", label: "🌎 Amériques" }, { value: "europe", label: "🌍 Europe" }, { value: "africa", label: "🌍 Afrique" }, { value: "asia", label: "🌏 Asie & Océanie" }] },
+        { id: "home_vibe", category: "L'âme de ta maison", question: "Comment tu décrirais ton espace ?", subtitle: "Choisis ce qui lui ressemble le mieux", type: "select", options: [{ value: "design", label: "✦ Épuré & design", desc: "Chaque objet a sa place" }, { value: "chaleureux", label: "☕ Chaleureux & vivant", desc: "Des livres, des plantes, une cuisine qui sent bon" }, { value: "nature", label: "🌿 Nature & calme", desc: "Jardin, lumière naturelle, loin du bruit" }, { value: "urbain", label: "⚡ Urbain & dynamique", desc: "En plein cœur de la ville" }] },
+        { id: "hosting_style", category: "Toi comme hôte", question: "Quel type d'hôte tu es ?", subtitle: "Sois honnête", type: "select", options: [{ value: "guide", label: "🗺️ Le guide local", desc: "Je prépare un carnet d'adresses secrètes" }, { value: "discret", label: "🔑 Le discret bienveillant", desc: "Je laisse les clés et fais confiance" }, { value: "precis", label: "📋 Le précis & organisé", desc: "J'ai des règles claires à respecter" }, { value: "flexible", label: "🌊 Le flexible", desc: "Installe-toi comme chez toi, vraiment" }] },
+        { id: "guest_behavior", category: "Toi comme invité", question: "Dans une maison qui n'est pas la tienne, tu es...", subtitle: "La vraie question de compatibilité", type: "select", options: [{ value: "respectueux", label: "🧘 Ultra respectueux", desc: "Je laisse tout comme je l'ai trouvé" }, { value: "naturel", label: "🏡 Naturel & à l'aise", desc: "Je vis normalement et range bien avant de partir" }, { value: "curieux", label: "🔍 Curieux & attentionné", desc: "J'essaie de comprendre leur façon de vivre" }, { value: "social", label: "💬 Social", desc: "J'aime rester en contact avec les hôtes" }] },
+        { id: "home_rules", category: "Tes règles", question: "Ce qui est non-négociable chez toi ?", subtitle: "Sélectionne tout ce qui s'applique", type: "multi", options: [{ value: "non_fumeur", label: "🚭 Non-fumeur" }, { value: "pas_animaux", label: "🐾 Pas d'animaux" }, { value: "animaux_ok", label: "🐕 Animaux bienvenus" }, { value: "pas_fete", label: "🔇 Pas de fêtes" }, { value: "enfants_ok", label: "👨‍👩‍👧 Familles bienvenues" }, { value: "pas_enfants", label: "🚫 Pas d'enfants" }] },
+        { id: "travel_rhythm", category: "Ton rythme", question: "Combien de fois par an tu voyages ?", subtitle: "Pour calibrer tes opportunités", type: "select", options: [{ value: "1_2", label: "1–2 fois par an", desc: "Les grandes vacances" }, { value: "3_4", label: "3–4 fois par an", desc: "Un long + quelques courts" }, { value: "5_plus", label: "5 fois ou plus", desc: "Je voyage dès que je peux" }, { value: "nomade", label: "Quasi nomade", desc: "La maison est autant là-bas qu'ici" }] },
+        { id: "match_priority", category: "Le match parfait", question: "Un bon match c'est avant tout...", subtitle: "Ce qui prime pour toi", type: "select", options: [{ value: "style_vie", label: "🌀 Un style de vie compatible" }, { value: "communication", label: "💬 Une communication fluide" }, { value: "destination", label: "📍 La bonne destination" }, { value: "confiance", label: "🔒 Un profil fiable & vérifié" }] },
       ]
     : [
-        {
-          id: "home_location",
-          category: "Your home",
-          question: "Where is your home?",
-          subtitle: "The starting point of every swap",
-          type: "select",
-          options: [
-            { value: "americas", label: "🌎 Americas" },
-            { value: "europe", label: "🌍 Europe" },
-            { value: "africa", label: "🌍 Africa" },
-            { value: "asia", label: "🌏 Asia & Oceania" },
-          ],
-        },
-        {
-          id: "home_vibe",
-          category: "Your home's soul",
-          question: "How would you describe your space?",
-          subtitle: "Pick what fits best",
-          type: "select",
-          options: [
-            {
-              value: "design",
-              label: "✦ Minimal & designed",
-              desc: "Every object has its place",
-            },
-            {
-              value: "cozy",
-              label: "☕ Cozy & lived-in",
-              desc: "Books, plants, a kitchen that smells great",
-            },
-            {
-              value: "nature",
-              label: "🌿 Nature & calm",
-              desc: "Garden, natural light, away from noise",
-            },
-            {
-              value: "urban",
-              label: "⚡ Urban & dynamic",
-              desc: "Heart of the city",
-            },
-          ],
-        },
-        {
-          id: "hosting_style",
-          category: "You as a host",
-          question: "What kind of host are you?",
-          subtitle: "Be honest",
-          type: "select",
-          options: [
-            {
-              value: "guide",
-              label: "🗺️ The local guide",
-              desc: "I prep a secret address book",
-            },
-            {
-              value: "discret",
-              label: "🔑 The discreet & trusting",
-              desc: "I leave the keys and trust completely",
-            },
-            {
-              value: "precis",
-              label: "📋 The organized one",
-              desc: "I have clear rules I want respected",
-            },
-            {
-              value: "flexible",
-              label: "🌊 The flexible one",
-              desc: "Make yourself truly at home",
-            },
-          ],
-        },
-        {
-          id: "guest_behavior",
-          category: "You as a guest",
-          question: "In someone else's home, you are...",
-          subtitle: "The real compatibility question",
-          type: "select",
-          options: [
-            {
-              value: "respectueux",
-              label: "🧘 Ultra respectful",
-              desc: "I leave everything as I found it",
-            },
-            {
-              value: "naturel",
-              label: "🏡 Natural & comfortable",
-              desc: "I live normally and tidy well before leaving",
-            },
-            {
-              value: "curieux",
-              label: "🔍 Curious & attentive",
-              desc: "I try to understand how they live",
-            },
-            {
-              value: "social",
-              label: "💬 Social",
-              desc: "I like staying in touch with hosts",
-            },
-          ],
-        },
-        {
-          id: "home_rules",
-          category: "Your rules",
-          question: "What's non-negotiable at your place?",
-          subtitle: "Select all that apply",
-          type: "multi",
-          options: [
-            { value: "non_fumeur", label: "🚭 No smoking" },
-            { value: "pas_animaux", label: "🐾 No pets" },
-            { value: "animaux_ok", label: "🐕 Pets welcome" },
-            { value: "pas_fete", label: "🔇 No parties" },
-            { value: "enfants_ok", label: "👨‍👩‍👧 Families welcome" },
-            { value: "pas_enfants", label: "🚫 No children" },
-          ],
-        },
-        {
-          id: "travel_rhythm",
-          category: "Your rhythm",
-          question: "How often do you travel per year?",
-          subtitle: "To calibrate your opportunities",
-          type: "select",
-          options: [
-            {
-              value: "1_2",
-              label: "1–2 times a year",
-              desc: "Main holidays",
-            },
-            {
-              value: "3_4",
-              label: "3–4 times a year",
-              desc: "One long + a few short",
-            },
-            {
-              value: "5_plus",
-              label: "5+ times a year",
-              desc: "I travel whenever I can",
-            },
-            {
-              value: "nomade",
-              label: "Almost nomadic",
-              desc: "Home is as much there as here",
-            },
-          ],
-        },
-        {
-          id: "match_priority",
-          category: "The perfect match",
-          question: "A great match is above all...",
-          subtitle: "What matters most to you",
-          type: "select",
-          options: [
-            { value: "style_vie", label: "🌀 A compatible lifestyle" },
-            { value: "communication", label: "💬 Smooth communication" },
-            { value: "destination", label: "📍 The right destination" },
-            {
-              value: "confiance",
-              label: "🔒 A verified, reliable profile",
-            },
-          ],
-        },
+        { id: "home_location", category: "Your home", question: "Where is your home?", subtitle: "The starting point of every swap", type: "select", options: [{ value: "americas", label: "🌎 Americas" }, { value: "europe", label: "🌍 Europe" }, { value: "africa", label: "🌍 Africa" }, { value: "asia", label: "🌏 Asia & Oceania" }] },
+        { id: "home_vibe", category: "Your home's soul", question: "How would you describe your space?", subtitle: "Pick what fits best", type: "select", options: [{ value: "design", label: "✦ Minimal & designed", desc: "Every object has its place" }, { value: "cozy", label: "☕ Cozy & lived-in", desc: "Books, plants, a kitchen that smells great" }, { value: "nature", label: "🌿 Nature & calm", desc: "Garden, natural light, away from noise" }, { value: "urban", label: "⚡ Urban & dynamic", desc: "Heart of the city" }] },
+        { id: "hosting_style", category: "You as a host", question: "What kind of host are you?", subtitle: "Be honest", type: "select", options: [{ value: "guide", label: "🗺️ The local guide", desc: "I prep a secret address book" }, { value: "discret", label: "🔑 The discreet & trusting", desc: "I leave the keys and trust completely" }, { value: "precis", label: "📋 The organized one", desc: "I have clear rules I want respected" }, { value: "flexible", label: "🌊 The flexible one", desc: "Make yourself truly at home" }] },
+        { id: "guest_behavior", category: "You as a guest", question: "In someone else's home, you are...", subtitle: "The real compatibility question", type: "select", options: [{ value: "respectueux", label: "🧘 Ultra respectful", desc: "I leave everything as I found it" }, { value: "naturel", label: "🏡 Natural & comfortable", desc: "I live normally and tidy well before leaving" }, { value: "curieux", label: "🔍 Curious & attentive", desc: "I try to understand how they live" }, { value: "social", label: "💬 Social", desc: "I like staying in touch with hosts" }] },
+        { id: "home_rules", category: "Your rules", question: "What's non-negotiable at your place?", subtitle: "Select all that apply", type: "multi", options: [{ value: "non_fumeur", label: "🚭 No smoking" }, { value: "pas_animaux", label: "🐾 No pets" }, { value: "animaux_ok", label: "🐕 Pets welcome" }, { value: "pas_fete", label: "🔇 No parties" }, { value: "enfants_ok", label: "👨‍👩‍👧 Families welcome" }, { value: "pas_enfants", label: "🚫 No children" }] },
+        { id: "travel_rhythm", category: "Your rhythm", question: "How often do you travel per year?", subtitle: "To calibrate your opportunities", type: "select", options: [{ value: "1_2", label: "1–2 times a year", desc: "Main holidays" }, { value: "3_4", label: "3–4 times a year", desc: "One long + a few short" }, { value: "5_plus", label: "5+ times a year", desc: "I travel whenever I can" }, { value: "nomade", label: "Almost nomadic", desc: "Home is as much there as here" }] },
+        { id: "match_priority", category: "The perfect match", question: "A great match is above all...", subtitle: "What matters most to you", type: "select", options: [{ value: "style_vie", label: "🌀 A compatible lifestyle" }, { value: "communication", label: "💬 Smooth communication" }, { value: "destination", label: "📍 The right destination" }, { value: "confiance", label: "🔒 A verified, reliable profile" }] },
       ];
 
-// ── STYLES ───────────────────────────────────────────────────
-const C = {
-  bg: "#080a0f",
-  bgCard: "rgba(255,255,255,0.03)",
-  bgCard2: "rgba(255,255,255,0.06)",
-  gold: "#D4AF6A",
-  goldLight: "#E8C980",
-  purple: "#8B7FD4",
-  text: "#F0EDE8",
-  textMuted: "rgba(240,237,232,0.45)",
-  textDim: "rgba(240,237,232,0.25)",
-  border: "rgba(255,255,255,0.08)",
-  borderGold: "rgba(212,175,106,0.3)",
-  grad: "linear-gradient(135deg, #D4AF6A, #8B7FD4)",
-  gradBtn:
-    "linear-gradient(135deg, #D4AF6A 0%, #C4956A 50%, #8B7FD4 100%)",
-};
-
-const base = {
-  fontFamily: "'Georgia', 'Times New Roman', serif",
-  color: C.text,
-  background: C.bg,
-  minHeight: "100vh",
-};
-
-const tag = (extra = {}) => ({
-  fontSize: "0.6rem",
-  letterSpacing: "0.25em",
-  textTransform: "uppercase",
-  color: C.gold,
-  fontFamily: "sans-serif",
-  ...extra,
-});
-
-const heading = (size = "2rem", extra = {}) => ({
-  fontSize: size,
-  fontWeight: 700,
-  color: C.text,
-  letterSpacing: "-0.02em",
-  lineHeight: 1.2,
-  ...extra,
-});
-
-const body = (extra = {}) => ({
-  fontSize: "0.9rem",
-  color: C.textMuted,
-  fontFamily: "sans-serif",
-  lineHeight: 1.6,
-  ...extra,
-});
-
-const btn = (variant = "primary", extra = {}) => ({
-  padding: "0.85rem 1.75rem",
-  borderRadius: "10px",
-  border: variant === "ghost" ? `1px solid ${C.border}` : "none",
-  cursor: "pointer",
-  fontSize: "0.85rem",
-  fontWeight: 700,
-  fontFamily: "sans-serif",
-  letterSpacing: "0.05em",
-  background:
-    variant === "primary"
-      ? C.gradBtn
-      : variant === "ghost"
-      ? "transparent"
-      : C.bgCard2,
-  color: variant === "primary" ? "#080a0f" : C.text,
-  transition: "all 0.2s ease",
-  ...extra,
-});
-
-const card = (extra = {}) => ({
-  background: C.bgCard,
-  border: `1px solid ${C.border}`,
-  borderRadius: "14px",
-  padding: "1.5rem",
-  ...extra,
-});
-
-const input = (extra = {}) => ({
-  width: "100%",
-  padding: "0.85rem 1rem",
-  borderRadius: "10px",
-  border: `1px solid ${C.border}`,
-  background: "rgba(255,255,255,0.04)",
-  color: C.text,
-  fontSize: "0.9rem",
-  fontFamily: "sans-serif",
-  outline: "none",
-  boxSizing: "border-box",
-  ...extra,
-});
-
 // ── COMPONENTS ───────────────────────────────────────────────
-const ProgressBar = ({ current, total }) => (
-  <div
-    style={{
-      height: "2px",
-      background: C.border,
-      borderRadius: "2px",
-      marginBottom: "2.5rem",
-    }}
-  >
-    <div
-      style={{
-        height: "100%",
-        width: `${(current / total) * 100}%`,
-        background: C.grad,
-        borderRadius: "2px",
-        transition: "width 0.5s ease",
-      }}
-    />
-  </div>
-);
 
-const ScoreBadge = ({ score }) => {
-  const color = score >= 80 ? "#6ED9A0" : score >= 65 ? C.gold : "#E07070";
-
+const ScoreBadge = ({ score, large }) => {
+  const color = score >= 80 ? "text-sage-dark bg-sage/10 border-sage/30" : score >= 65 ? "text-terracotta bg-terracotta/10 border-terracotta/30" : "text-warm-500 bg-warm-200 border-warm-300";
   return (
-    <div
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "0.4rem",
-        background: `${color}18`,
-        border: `1px solid ${color}40`,
-        borderRadius: "99px",
-        padding: "0.3rem 0.75rem",
-      }}
-    >
-      <div
-        style={{
-          width: "6px",
-          height: "6px",
-          borderRadius: "50%",
-          background: color,
-        }}
-      />
-      <span
-        style={{
-          fontSize: "0.8rem",
-          fontWeight: 700,
-          color,
-          fontFamily: "sans-serif",
-        }}
-      >
-        {score}%
-      </span>
+    <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 ${color} ${large ? "px-5 py-2.5" : ""}`}>
+      <div className={`rounded-full ${score >= 80 ? "bg-sage-dark" : score >= 65 ? "bg-terracotta" : "bg-warm-500"} ${large ? "w-2.5 h-2.5" : "w-1.5 h-1.5"}`} />
+      <span className={`font-sans font-bold ${large ? "text-2xl" : "text-sm"}`}>{score}%</span>
     </div>
   );
 };
 
-const Avatar = ({ emoji, size = 48 }) => (
-  <div
-    style={{
-      width: size,
-      height: size,
-      borderRadius: "50%",
-      background: "rgba(212,175,106,0.15)",
-      border: `1px solid ${C.borderGold}`,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontSize: size * 0.45,
-      flexShrink: 0,
-    }}
-  >
+const Avatar = ({ emoji, size = "w-12 h-12" }) => (
+  <div className={`${size} rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center text-xl flex-shrink-0`}>
     {emoji}
   </div>
 );
@@ -813,269 +292,117 @@ const Avatar = ({ emoji, size = 48 }) => (
 // ── LANDING PAGE ─────────────────────────────────────────────
 const LandingPage = ({ lang, setLang, onStart }) => {
   const t = T[lang];
-
   return (
-    <div style={{ ...base, overflowX: "hidden" }}>
-      <div
-        style={{
-          position: "fixed",
-          top: "-20%",
-          right: "-10%",
-          width: "60vw",
-          height: "60vw",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(212,175,106,0.07) 0%, transparent 65%)",
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
-      <div
-        style={{
-          position: "fixed",
-          bottom: "-20%",
-          left: "-10%",
-          width: "50vw",
-          height: "50vw",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(139,127,212,0.07) 0%, transparent 65%)",
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
-
-      <nav
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "1.5rem 2rem",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        <span
-          style={{
-            fontSize: "1rem",
-            letterSpacing: "0.3em",
-            color: C.text,
-            fontStyle: "italic",
-          }}
-        >
-          HESTIA
-        </span>
-
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <button
-            style={btn("ghost", { padding: "0.5rem 1rem", fontSize: "0.75rem" })}
-            onClick={() => setLang((l) => (l === "fr" ? "en" : "fr"))}
-          >
+    <div className="min-h-screen bg-cream-light">
+      {/* Nav */}
+      <nav className="flex justify-between items-center px-6 md:px-10 py-5">
+        <span className="font-serif text-xl tracking-widest text-warm-800 italic">HESTIA</span>
+        <div className="flex gap-3 items-center">
+          <button onClick={() => setLang((l) => (l === "fr" ? "en" : "fr"))} className="px-4 py-2 text-sm font-sans text-warm-600 border border-warm-200 rounded-xl hover:bg-cream transition-colors">
             {lang === "fr" ? "EN" : "FR"}
           </button>
-
-          <button
-            style={btn("ghost", { padding: "0.5rem 1rem", fontSize: "0.75rem" })}
-            onClick={onStart}
-          >
+          <button onClick={onStart} className="px-4 py-2 text-sm font-sans text-warm-700 border border-warm-200 rounded-xl hover:bg-cream transition-colors">
             {t.login}
           </button>
         </div>
       </nav>
 
-      <div
-        style={{
-          textAlign: "center",
-          padding: "5rem 2rem 4rem",
-          position: "relative",
-          zIndex: 1,
-          maxWidth: "700px",
-          margin: "0 auto",
-        }}
-      >
-        <div style={{ ...tag(), marginBottom: "1.5rem" }}>
-          Home Exchange — Reimagined
+      {/* Hero */}
+      <div className="relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6 md:px-10 pt-12 md:pt-20 pb-16 md:pb-28">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+            <div className="animate-fade-up">
+              <p className="text-xs tracking-[0.25em] uppercase text-terracotta font-sans font-medium mb-5">
+                Home Exchange — Reimagined
+              </p>
+              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-warm-900 leading-tight mb-6 text-balance">
+                {t.tagline}
+              </h1>
+              <p className="font-sans text-warm-500 text-lg leading-relaxed mb-10 max-w-md">
+                {t.sub}
+              </p>
+              <button
+                onClick={onStart}
+                className="bg-terracotta text-white font-sans font-semibold text-base px-8 py-4 rounded-2xl shadow-soft hover:bg-terracotta-dark hover:shadow-elevated hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+              >
+                {t.cta}
+              </button>
+            </div>
+
+            <div className="relative animate-fade-up" style={{ animationDelay: "0.15s" }}>
+              <div className="rounded-3xl overflow-hidden shadow-elevated">
+                <img src={heroImg} alt="Beautiful Mediterranean home" className="w-full h-64 md:h-96 object-cover" />
+              </div>
+              {/* Floating score card */}
+              <div className="absolute -bottom-4 -left-4 md:-left-8 bg-white rounded-2xl shadow-card p-4 border border-warm-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-sage/20 flex items-center justify-center text-lg">🏡</div>
+                  <div>
+                    <p className="font-sans text-xs text-warm-400 mb-0.5">Match trouvé</p>
+                    <ScoreBadge score={92} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <h1
-          style={{
-            ...heading("3rem"),
-            marginBottom: "1.25rem",
-            background: C.grad,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          {t.tagline}
-        </h1>
-
-        <p
-          style={{
-            ...body(),
-            fontSize: "1.05rem",
-            maxWidth: "500px",
-            margin: "0 auto 2.5rem",
-          }}
-        >
-          {t.sub}
-        </p>
-
-        <button
-          style={btn("primary", { fontSize: "1rem", padding: "1rem 2.5rem" })}
-          onClick={onStart}
-        >
-          {t.cta}
-        </button>
       </div>
 
-      <div
-        style={{
-          maxWidth: "800px",
-          margin: "0 auto 5rem",
-          padding: "0 2rem",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        <div style={card({ borderColor: C.borderGold })}>
-          <div style={{ ...tag(), marginBottom: "1rem", textAlign: "center" }}>
+      {/* Trust section */}
+      <div className="max-w-4xl mx-auto px-6 md:px-10 mb-20">
+        <div className="bg-white rounded-3xl shadow-card p-8 md:p-10 border border-warm-100">
+          <p className="text-xs tracking-[0.25em] uppercase text-terracotta font-sans font-medium text-center mb-8">
             {t.anti_title}
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "1.5rem",
-            }}
-          >
+          </p>
+          <div className="grid md:grid-cols-3 gap-6">
             {[t.anti_1, t.anti_2, t.anti_3].map((txt, i) => (
-              <div
-                key={i}
-                style={{
-                  display: "flex",
-                  gap: "0.75rem",
-                  alignItems: "flex-start",
-                }}
-              >
-                <span
-                  style={{
-                    color: C.gold,
-                    fontSize: "1.1rem",
-                    marginTop: "0.1rem",
-                  }}
-                >
-                  ✦
-                </span>
-                <p style={body({ fontSize: "0.85rem" })}>{txt}</p>
+              <div key={i} className="flex gap-3 items-start">
+                <span className="text-terracotta text-lg mt-0.5 flex-shrink-0">✦</span>
+                <p className="font-sans text-warm-500 text-sm leading-relaxed">{txt}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div
-        style={{
-          maxWidth: "900px",
-          margin: "0 auto 6rem",
-          padding: "0 2rem",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        <div style={{ ...tag(), textAlign: "center", marginBottom: "2rem" }}>
+      {/* Pricing */}
+      <div className="max-w-5xl mx-auto px-6 md:px-10 pb-24">
+        <p className="text-xs tracking-[0.25em] uppercase text-terracotta font-sans font-medium text-center mb-10">
           {t.pricing_title}
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: "1rem",
-          }}
-        >
+        </p>
+        <div className="grid md:grid-cols-3 gap-5">
           {[
-            {
-              label: t.free_label,
-              price: t.free_price,
-              desc: t.free_desc,
-              features: t.free_f,
-              highlight: false,
-            },
-            {
-              label: t.member_label,
-              price: t.member_price,
-              desc: t.member_desc,
-              features: t.member_f,
-              highlight: true,
-            },
-            {
-              label: t.premium_label,
-              price: t.premium_price,
-              desc: t.premium_desc,
-              features: t.premium_f,
-              highlight: false,
-            },
+            { label: t.free_label, price: t.free_price, desc: t.free_desc, features: t.free_f, highlight: false },
+            { label: t.member_label, price: t.member_price, desc: t.member_desc, features: t.member_f, highlight: true },
+            { label: t.premium_label, price: t.premium_price, desc: t.premium_desc, features: t.premium_f, highlight: false },
           ].map((plan, i) => (
             <div
               key={i}
-              style={card({
-                borderColor: plan.highlight ? C.borderGold : C.border,
-                position: "relative",
-                overflow: "hidden",
-              })}
+              className={`bg-white rounded-3xl p-7 border relative overflow-hidden transition-shadow hover:shadow-elevated ${
+                plan.highlight ? "border-terracotta/30 shadow-card" : "border-warm-100 shadow-soft"
+              }`}
             >
               {plan.highlight && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: "2px",
-                    background: C.grad,
-                  }}
-                />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-terracotta to-sage" />
               )}
-
-              <div style={{ ...tag(), marginBottom: "0.5rem" }}>{plan.label}</div>
-
-              <div
-                style={{
-                  fontSize: "2.2rem",
-                  fontWeight: 700,
-                  color: plan.highlight ? C.gold : C.text,
-                  marginBottom: "0.25rem",
-                }}
-              >
+              <p className="text-xs tracking-[0.2em] uppercase text-terracotta font-sans font-medium mb-2">{plan.label}</p>
+              <div className={`font-serif text-4xl font-bold mb-1 ${plan.highlight ? "text-terracotta" : "text-warm-800"}`}>
                 {plan.price}
               </div>
-
-              <div style={body({ fontSize: "0.8rem", marginBottom: "1.5rem" })}>
-                {plan.desc}
-              </div>
-
+              <p className="font-sans text-warm-400 text-sm mb-6">{plan.desc}</p>
               {plan.features.map((f, j) => (
-                <div
-                  key={j}
-                  style={{
-                    display: "flex",
-                    gap: "0.5rem",
-                    marginBottom: "0.6rem",
-                    alignItems: "center",
-                  }}
-                >
-                  <span style={{ color: C.gold, fontSize: "0.7rem" }}>✓</span>
-                  <span style={body({ fontSize: "0.82rem" })}>{f}</span>
+                <div key={j} className="flex gap-2.5 items-center mb-3">
+                  <span className="text-sage text-sm">✓</span>
+                  <span className="font-sans text-warm-600 text-sm">{f}</span>
                 </div>
               ))}
-
               <button
-                style={btn(plan.highlight ? "primary" : "ghost", {
-                  width: "100%",
-                  marginTop: "1.5rem",
-                })}
                 onClick={onStart}
+                className={`w-full mt-6 font-sans font-semibold text-sm py-3.5 rounded-xl transition-all duration-300 ${
+                  plan.highlight
+                    ? "bg-terracotta text-white hover:bg-terracotta-dark hover:shadow-soft hover:scale-[1.01] active:scale-[0.99]"
+                    : "bg-cream text-warm-700 border border-warm-200 hover:bg-warm-100"
+                }`}
               >
                 {t.start}
               </button>
@@ -1094,95 +421,49 @@ const AuthPage = ({ lang, onAuth }) => {
   const [email, setEmail] = useState("");
 
   return (
-    <div
-      style={{
-        ...base,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem",
-      }}
-    >
-      <div style={{ maxWidth: "420px", width: "100%" }}>
-        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-          <div
-            style={{
-              fontSize: "1rem",
-              letterSpacing: "0.3em",
-              color: C.text,
-              fontStyle: "italic",
-              marginBottom: "0.5rem",
-            }}
-          >
-            HESTIA
-          </div>
-
-          <h2 style={heading("1.5rem")}>
-            {isLogin
-              ? lang === "fr"
-                ? "Bon retour"
-                : "Welcome back"
-              : lang === "fr"
-              ? "Rejoindre Hestia"
-              : "Join Hestia"}
+    <div className="min-h-screen bg-cream-light flex items-center justify-center px-5">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-10">
+          <span className="font-serif text-xl tracking-widest text-warm-800 italic block mb-3">HESTIA</span>
+          <h2 className="font-serif text-3xl font-bold text-warm-900">
+            {isLogin ? (lang === "fr" ? "Bon retour" : "Welcome back") : (lang === "fr" ? "Rejoindre Hestia" : "Join Hestia")}
           </h2>
         </div>
 
-        <div style={card()}>
+        <div className="bg-white rounded-3xl shadow-card p-8 border border-warm-100">
           {!isLogin && (
             <input
-              style={{ ...input(), marginBottom: "0.75rem" }}
+              className="w-full px-4 py-3.5 rounded-xl border border-warm-200 bg-cream-light/50 text-warm-800 font-sans text-sm outline-none focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 transition-all mb-3"
               placeholder={lang === "fr" ? "Ton prénom" : "Your first name"}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           )}
-
           <input
-            style={{ ...input(), marginBottom: "0.75rem" }}
+            className="w-full px-4 py-3.5 rounded-xl border border-warm-200 bg-cream-light/50 text-warm-800 font-sans text-sm outline-none focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 transition-all mb-3"
             placeholder="Email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-
           <input
-            style={{ ...input(), marginBottom: "1.5rem" }}
+            className="w-full px-4 py-3.5 rounded-xl border border-warm-200 bg-cream-light/50 text-warm-800 font-sans text-sm outline-none focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 transition-all mb-6"
             placeholder={lang === "fr" ? "Mot de passe" : "Password"}
             type="password"
           />
-
           <button
-            style={btn("primary", { width: "100%" })}
+            className="w-full bg-terracotta text-white font-sans font-semibold text-sm py-3.5 rounded-xl hover:bg-terracotta-dark hover:shadow-soft transition-all duration-300 active:scale-[0.98]"
             onClick={() => onAuth(name || "Vous", email)}
           >
-            {isLogin
-              ? lang === "fr"
-                ? "Se connecter"
-                : "Log in"
-              : lang === "fr"
-              ? "Créer mon compte"
-              : "Create account"}
+            {isLogin ? (lang === "fr" ? "Se connecter" : "Log in") : (lang === "fr" ? "Créer mon compte" : "Create account")}
           </button>
-
           <p
-            style={{
-              ...body({
-                fontSize: "0.8rem",
-                textAlign: "center",
-                marginTop: "1rem",
-                cursor: "pointer",
-              }),
-            }}
+            className="font-sans text-warm-400 text-sm text-center mt-5 cursor-pointer hover:text-terracotta transition-colors"
             onClick={() => setIsLogin(!isLogin)}
           >
             {isLogin
-              ? lang === "fr"
-                ? "Pas encore de compte ? Créer un profil"
-                : "No account? Create one"
-              : lang === "fr"
-              ? "Déjà un compte ? Se connecter"
-              : "Already have an account? Log in"}
+              ? (lang === "fr" ? "Pas encore de compte ? Créer un profil" : "No account? Create one")
+              : (lang === "fr" ? "Déjà un compte ? Se connecter" : "Already have an account? Log in")}
           </p>
         </div>
       </div>
@@ -1205,9 +486,7 @@ const Questionnaire = ({ lang, onComplete }) => {
   const handleSelect = (value) => {
     if (isMulti) {
       const cur = answers[q.id] || [];
-      const upd = cur.includes(value)
-        ? cur.filter((v) => v !== value)
-        : [...cur, value];
+      const upd = cur.includes(value) ? cur.filter((v) => v !== value) : [...cur, value];
       setAnswers({ ...answers, [q.id]: upd });
     } else {
       setAnswers({ ...answers, [q.id]: value });
@@ -1215,101 +494,59 @@ const Questionnaire = ({ lang, onComplete }) => {
   };
 
   return (
-    <div
-      style={{
-        ...base,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem 1rem",
-      }}
-    >
-      <div style={{ maxWidth: "540px", width: "100%" }}>
-        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <span
-            style={{
-              fontSize: "0.85rem",
-              letterSpacing: "0.3em",
-              color: C.text,
-              fontStyle: "italic",
-            }}
-          >
-            HESTIA
-          </span>
+    <div className="min-h-screen bg-cream-light flex items-center justify-center px-5 py-8">
+      <div className="max-w-lg w-full">
+        <div className="text-center mb-8">
+          <span className="font-serif text-base tracking-widest text-warm-800 italic">HESTIA</span>
         </div>
 
-        <ProgressBar current={step + 1} total={questions.length} />
+        {/* Progress bar */}
+        <div className="h-1 bg-warm-100 rounded-full mb-10 overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-terracotta to-sage rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${((step + 1) / questions.length) * 100}%` }}
+          />
+        </div>
 
-        <div style={{ ...tag(), marginBottom: "0.6rem" }}>{q.category}</div>
-        <h2 style={{ ...heading("1.75rem"), marginBottom: "0.5rem" }}>
-          {q.question}
-        </h2>
-        <p style={{ ...body(), marginBottom: "1.75rem" }}>{q.subtitle}</p>
+        <p className="text-xs tracking-[0.2em] uppercase text-terracotta font-sans font-medium mb-2">{q.category}</p>
+        <h2 className="font-serif text-2xl md:text-3xl font-bold text-warm-900 mb-2">{q.question}</h2>
+        <p className="font-sans text-warm-400 text-sm mb-7">{q.subtitle}</p>
 
-        <div
-          style={{
-            display: isMulti ? "grid" : "flex",
-            gridTemplateColumns: isMulti ? "1fr 1fr" : undefined,
-            flexDirection: isMulti ? undefined : "column",
-            gap: "0.6rem",
-            marginBottom: "1.5rem",
-          }}
-        >
+        <div className={`${isMulti ? "grid grid-cols-2" : "flex flex-col"} gap-2.5 mb-6`}>
           {q.options.map((opt) => {
-            const sel = isMulti
-              ? (selected || []).includes(opt.value)
-              : selected === opt.value;
-
+            const sel = isMulti ? (selected || []).includes(opt.value) : selected === opt.value;
             return (
               <button
                 key={opt.value}
                 onClick={() => handleSelect(opt.value)}
-                style={{
-                  padding: "0.9rem 1.1rem",
-                  borderRadius: "10px",
-                  border: `1px solid ${sel ? C.borderGold : C.border}`,
-                  background: sel ? "rgba(212,175,106,0.08)" : C.bgCard,
-                  cursor: "pointer",
-                  textAlign: "left",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.2rem",
-                  transition: "all 0.15s",
-                }}
+                className={`p-4 rounded-2xl border text-left flex flex-col gap-1 transition-all duration-200 ${
+                  sel
+                    ? "border-terracotta/40 bg-terracotta/5 shadow-soft"
+                    : "border-warm-100 bg-white hover:border-warm-200 hover:shadow-soft"
+                }`}
               >
-                <span
-                  style={{
-                    fontSize: "0.9rem",
-                    color: sel ? C.gold : C.text,
-                    fontFamily: "sans-serif",
-                    fontWeight: sel ? 600 : 400,
-                  }}
-                >
+                <span className={`font-sans text-sm ${sel ? "text-terracotta font-semibold" : "text-warm-700"}`}>
                   {opt.label}
                 </span>
-                {opt.desc && <span style={body({ fontSize: "0.75rem" })}>{opt.desc}</span>}
+                {opt.desc && <span className="font-sans text-xs text-warm-400">{opt.desc}</span>}
               </button>
             );
           })}
 
-          <div style={{ gridColumn: isMulti ? "span 2" : undefined }}>
+          <div className={isMulti ? "col-span-2" : ""}>
             <input
-              style={{ ...input(), fontSize: "0.85rem" }}
-              placeholder={
-                lang === "fr"
-                  ? "✏️ Autre chose à préciser ? (optionnel)"
-                  : "✏️ Anything else to add? (optional)"
-              }
+              className="w-full px-4 py-3 rounded-xl border border-warm-200 bg-white text-warm-700 font-sans text-sm outline-none focus:border-terracotta/50 transition-all"
+              placeholder={lang === "fr" ? "✏️ Autre chose à préciser ? (optionnel)" : "✏️ Anything else to add? (optional)"}
               value={otherText[q.id] || ""}
-              onChange={(e) =>
-                setOtherText({ ...otherText, [q.id]: e.target.value })
-              }
+              onChange={(e) => setOtherText({ ...otherText, [q.id]: e.target.value })}
             />
           </div>
         </div>
 
         <button
-          style={btn("primary", { width: "100%", opacity: canContinue ? 1 : 0.4 })}
+          className={`w-full bg-terracotta text-white font-sans font-semibold text-sm py-3.5 rounded-xl transition-all duration-300 active:scale-[0.98] ${
+            canContinue ? "hover:bg-terracotta-dark hover:shadow-soft opacity-100" : "opacity-40 cursor-not-allowed"
+          }`}
           onClick={() => {
             if (!canContinue) return;
             if (step < questions.length - 1) setStep((s) => s + 1);
@@ -1317,28 +554,20 @@ const Questionnaire = ({ lang, onComplete }) => {
           }}
         >
           {step === questions.length - 1
-            ? lang === "fr"
-              ? "Voir mes matchs →"
-              : "See my matches →"
-            : lang === "fr"
-            ? "Continuer →"
-            : "Continue →"}
+            ? (lang === "fr" ? "Voir mes matchs →" : "See my matches →")
+            : (lang === "fr" ? "Continuer →" : "Continue →")}
         </button>
 
         {step > 0 && (
           <button
-            style={btn("ghost", { width: "100%", marginTop: "0.75rem" })}
+            className="w-full mt-3 font-sans text-sm text-warm-500 py-3 rounded-xl border border-warm-200 bg-white hover:bg-cream transition-colors"
             onClick={() => setStep((s) => s - 1)}
           >
             {lang === "fr" ? "← Retour" : "← Back"}
           </button>
         )}
 
-        <p
-          style={{
-            ...body({ textAlign: "center", fontSize: "0.7rem", marginTop: "1rem" }),
-          }}
-        >
+        <p className="font-sans text-warm-300 text-xs text-center mt-4">
           {step + 1} / {questions.length}
         </p>
       </div>
@@ -1363,26 +592,14 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
 
   const sendMessage = () => {
     if (!msgInput.trim() || !activeConv) return;
-
     const redacted = redactContact(msgInput);
-    const newMsg = {
-      from: "me",
-      text: redacted,
-      time: lang === "fr" ? "maintenant" : "now",
-    };
-
-    setConversations((prev) => ({
-      ...prev,
-      [activeConv]: [...(prev[activeConv] || []), newMsg],
-    }));
-
+    const newMsg = { from: "me", text: redacted, time: lang === "fr" ? "maintenant" : "now" };
+    setConversations((prev) => ({ ...prev, [activeConv]: [...(prev[activeConv] || []), newMsg] }));
     setMsgInput("");
   };
 
   const confirmExchange = (userId) =>
-    setConfirmedExchanges((prev) =>
-      prev.includes(userId) ? prev : [...prev, userId]
-    );
+    setConfirmedExchanges((prev) => (prev.includes(userId) ? prev : [...prev, userId]));
 
   const navItems = [
     { id: "matches", icon: "✦", label: t.nav_matches },
@@ -1393,224 +610,83 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
   ];
 
   return (
-    <div
-      style={{
-        ...base,
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-      }}
-    >
-      <div
-        style={{
-          padding: "1rem 1.5rem",
-          borderBottom: `1px solid ${C.border}`,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span
-          style={{
-            fontSize: "0.85rem",
-            letterSpacing: "0.3em",
-            color: C.text,
-            fontStyle: "italic",
-          }}
-        >
-          HESTIA
-        </span>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+    <div className="min-h-screen bg-cream-light flex flex-col">
+      {/* Top bar */}
+      <div className="px-5 py-4 border-b border-warm-100 bg-white/80 backdrop-blur-sm flex justify-between items-center sticky top-0 z-50">
+        <span className="font-serif text-base tracking-widest text-warm-800 italic">HESTIA</span>
+        <div className="flex items-center gap-3">
           {isPremium && (
-            <span
-              style={{
-                ...tag(),
-                color: C.gold,
-                background: "rgba(212,175,106,0.1)",
-                padding: "0.3rem 0.75rem",
-                borderRadius: "99px",
-                border: `1px solid ${C.borderGold}`,
-              }}
-            >
+            <span className="text-xs tracking-[0.15em] uppercase text-terracotta font-sans font-medium bg-terracotta/8 px-3 py-1.5 rounded-full border border-terracotta/20">
               ✦ MEMBER
             </span>
           )}
-          <Avatar emoji="👤" size={34} />
+          <Avatar emoji="👤" size="w-9 h-9" />
         </div>
       </div>
 
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          background: "#0d0f14",
-          borderTop: `1px solid ${C.border}`,
-          display: "flex",
-          zIndex: 100,
-        }}
-      >
+      {/* Bottom nav */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-warm-100 flex z-50 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.06)]">
         {navItems.map((n) => (
           <button
             key={n.id}
-            onClick={() => {
-              setTab(n.id);
-              if (n.id !== "messages") setActiveConv(null);
-            }}
-            style={{
-              flex: 1,
-              padding: "0.9rem 0.5rem",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "0.25rem",
-            }}
+            onClick={() => { setTab(n.id); if (n.id !== "messages") setActiveConv(null); }}
+            className="flex-1 py-3 flex flex-col items-center gap-1 bg-transparent border-none cursor-pointer transition-colors"
           >
-            <span style={{ fontSize: "1rem" }}>{n.icon}</span>
-            <span
-              style={{
-                fontSize: "0.6rem",
-                letterSpacing: "0.1em",
-                fontFamily: "sans-serif",
-                color: tab === n.id ? C.gold : C.textDim,
-                textTransform: "uppercase",
-              }}
-            >
+            <span className="text-base">{n.icon}</span>
+            <span className={`text-[0.6rem] tracking-wider font-sans uppercase ${tab === n.id ? "text-terracotta font-semibold" : "text-warm-300"}`}>
               {n.label}
             </span>
           </button>
         ))}
       </div>
 
-      <div
-        style={{
-          flex: 1,
-          padding: "1.5rem",
-          paddingBottom: "5rem",
-          maxWidth: "700px",
-          width: "100%",
-          margin: "0 auto",
-        }}
-      >
+      {/* Content */}
+      <div className="flex-1 px-5 pb-24 pt-6 max-w-2xl w-full mx-auto">
+
+        {/* ── MATCHES TAB ── */}
         {tab === "matches" && (
           <div>
-            <div style={{ ...tag(), marginBottom: "1.5rem" }}>
+            <p className="text-xs tracking-[0.2em] uppercase text-terracotta font-sans font-medium mb-5">
               {matches.length} {lang === "fr" ? "matchs trouvés" : "matches found"}
-            </div>
+            </p>
 
             {matches.map((m, i) => (
               <div
                 key={m.id}
-                style={card({
-                  marginBottom: "1rem",
-                  position: "relative",
-                  overflow: "hidden",
-                  borderColor: i === 0 ? C.borderGold : C.border,
-                })}
+                className={`bg-white rounded-2xl shadow-soft p-5 mb-4 relative overflow-hidden border transition-shadow hover:shadow-card ${
+                  i === 0 ? "border-terracotta/20" : "border-warm-100"
+                }`}
               >
                 {!isPremium && i >= 2 && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      backdropFilter: "blur(8px)",
-                      background: "rgba(8,10,15,0.7)",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      zIndex: 2,
-                      borderRadius: "14px",
-                    }}
-                  >
-                    <span style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-                      🔒
-                    </span>
-                    <p
-                      style={body({
-                        fontSize: "0.8rem",
-                        textAlign: "center",
-                        marginBottom: "1rem",
-                      })}
-                    >
-                      {t.free_blur}
-                    </p>
-                    <button
-                      style={btn("primary", {
-                        fontSize: "0.8rem",
-                        padding: "0.6rem 1.25rem",
-                      })}
-                      onClick={onUpgrade}
-                    >
+                  <div className="absolute inset-0 backdrop-blur-md bg-cream-light/70 flex flex-col items-center justify-center z-10 rounded-2xl">
+                    <span className="text-2xl mb-2">🔒</span>
+                    <p className="font-sans text-warm-500 text-sm text-center mb-4 px-6">{t.free_blur}</p>
+                    <button className="bg-terracotta text-white font-sans font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-terracotta-dark transition-all" onClick={onUpgrade}>
                       {t.upgrade}
                     </button>
                   </div>
                 )}
 
-                <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
-                  <Avatar emoji={m.avatar} size={52} />
-
-                  <div style={{ flex: 1 }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: "0.4rem",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "1rem",
-                          fontWeight: 600,
-                          color: C.text,
-                        }}
-                      >
-                        {m.name}
-                      </span>
+                <div className="flex gap-4 items-start">
+                  <Avatar emoji={m.avatar} size="w-14 h-14" />
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-serif text-lg font-semibold text-warm-800">{m.name}</span>
                       <ScoreBadge score={m.score} />
                     </div>
-
-                    <p style={body({ fontSize: "0.8rem", marginBottom: "0.5rem" })}>
-                      📍 {m.location}
-                    </p>
-
-                    <p style={body({ fontSize: "0.82rem", marginBottom: "0.75rem" })}>
-                      {m.bio}
-                    </p>
-
-                    <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                    <p className="font-sans text-warm-400 text-sm mb-2">📍 {m.location}</p>
+                    <p className="font-sans text-warm-600 text-sm leading-relaxed mb-3">{m.bio}</p>
+                    <div className="flex gap-2 flex-wrap">
                       {(isPremium || i < 2) && (
                         <button
-                          style={btn("ghost", {
-                            fontSize: "0.78rem",
-                            padding: "0.5rem 1rem",
-                          })}
-                          onClick={() => {
-                            setTab("messages");
-                            setActiveConv(m.id);
-                          }}
+                          className="font-sans text-sm text-warm-600 border border-warm-200 px-4 py-2 rounded-xl hover:bg-cream transition-colors"
+                          onClick={() => { setTab("messages"); setActiveConv(m.id); }}
                         >
                           💬 {lang === "fr" ? "Écrire" : "Message"}
                         </button>
                       )}
-
                       {m.isPremium && (
-                        <span
-                          style={{
-                            ...tag(),
-                            color: C.gold,
-                            padding: "0.3rem 0.6rem",
-                            background: "rgba(212,175,106,0.08)",
-                            borderRadius: "6px",
-                            border: `1px solid ${C.borderGold}`,
-                          }}
-                        >
+                        <span className="text-xs tracking-[0.15em] uppercase text-sage-dark font-sans font-medium bg-sage/10 px-3 py-2 rounded-xl border border-sage/20">
                           ✦ Vérifié
                         </span>
                       )}
@@ -1621,13 +697,16 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
             ))}
 
             {!isPremium && (
-              <div style={card({ textAlign: "center", borderColor: C.borderGold })}>
-                <p style={body({ marginBottom: "1rem" })}>
+              <div className="bg-white rounded-2xl shadow-soft p-6 text-center border border-terracotta/20">
+                <p className="font-sans text-warm-500 text-sm mb-4">
                   {lang === "fr"
                     ? `${Math.max(matches.length - 2, 0)} autres matchs disponibles en Member`
                     : `${Math.max(matches.length - 2, 0)} more matches available in Member`}
                 </p>
-                <button style={btn("primary")} onClick={onUpgrade}>
+                <button
+                  className="bg-terracotta text-white font-sans font-semibold text-sm px-6 py-3 rounded-xl hover:bg-terracotta-dark hover:shadow-soft transition-all duration-300 animate-btn-glow"
+                  onClick={onUpgrade}
+                >
                   {t.upgrade}
                 </button>
               </div>
@@ -1635,20 +714,15 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
           </div>
         )}
 
+        {/* ── MESSAGES LIST ── */}
         {tab === "messages" && !activeConv && (
           <div>
-            <div style={{ ...tag(), marginBottom: "1.5rem" }}>{t.nav_messages}</div>
+            <p className="text-xs tracking-[0.2em] uppercase text-terracotta font-sans font-medium mb-5">{t.nav_messages}</p>
 
             {!isPremium && (
-              <div
-                style={card({
-                  borderColor: C.borderGold,
-                  marginBottom: "1.5rem",
-                  textAlign: "center",
-                })}
-              >
-                <p style={body({ marginBottom: "1rem" })}>🔒 {t.locked_msg}</p>
-                <button style={btn("primary")} onClick={onUpgrade}>
+              <div className="bg-white rounded-2xl shadow-soft p-6 text-center border border-terracotta/20 mb-5">
+                <p className="font-sans text-warm-500 text-sm mb-4">🔒 {t.locked_msg}</p>
+                <button className="bg-terracotta text-white font-sans font-semibold text-sm px-6 py-3 rounded-xl hover:bg-terracotta-dark transition-all" onClick={onUpgrade}>
                   {t.upgrade}
                 </button>
               </div>
@@ -1658,43 +732,21 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
               const matchUser = MOCK_USERS.find((u) => u.id === uid);
               if (!matchUser) return null;
               const last = msgs[msgs.length - 1];
-
               return (
                 <div
                   key={uid}
-                  style={card({
-                    marginBottom: "0.75rem",
-                    cursor: isPremium ? "pointer" : "default",
-                    opacity: isPremium ? 1 : 0.5,
-                  })}
+                  className={`bg-white rounded-2xl shadow-soft p-4 mb-3 border border-warm-100 transition-all ${isPremium ? "cursor-pointer hover:shadow-card hover:border-warm-200" : "opacity-50"}`}
                   onClick={() => isPremium && setActiveConv(uid)}
                 >
-                  <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-                    <Avatar emoji={matchUser.avatar} size={40} />
-                    <div style={{ flex: 1, overflow: "hidden" }}>
-                      <div
-                        style={{
-                          fontWeight: 600,
-                          fontSize: "0.9rem",
-                          marginBottom: "0.2rem",
-                        }}
-                      >
-                        {matchUser.name}
-                      </div>
-                      <div
-                        style={body({
-                          fontSize: "0.8rem",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        })}
-                      >
-                        {last.redacted
-                          ? "🔒 " + t.redacted_notice.substring(0, 40) + "..."
-                          : last.text.substring(0, 50) + "..."}
+                  <div className="flex gap-3 items-center">
+                    <Avatar emoji={matchUser.avatar} size="w-11 h-11" />
+                    <div className="flex-1 overflow-hidden">
+                      <div className="font-sans font-semibold text-warm-800 text-sm mb-0.5">{matchUser.name}</div>
+                      <div className="font-sans text-warm-400 text-sm truncate">
+                        {last.redacted ? "🔒 " + t.redacted_notice.substring(0, 40) + "..." : last.text.substring(0, 50) + "..."}
                       </div>
                     </div>
-                    <span style={body({ fontSize: "0.72rem" })}>{last.time}</span>
+                    <span className="font-sans text-warm-300 text-xs">{last.time}</span>
                   </div>
                 </div>
               );
@@ -1702,171 +754,93 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
           </div>
         )}
 
+        {/* ── ACTIVE CONVERSATION ── */}
         {tab === "messages" && activeConv && (() => {
           const matchUser = MOCK_USERS.find((u) => u.id === activeConv);
           const msgs = conversations[activeConv] || [];
           const isConfirmed = confirmedExchanges.includes(activeConv);
 
           return (
-            <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 10rem)" }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.75rem",
-                  marginBottom: "1rem",
-                }}
-              >
+            <div className="flex flex-col h-[calc(100vh-10rem)]">
+              <div className="flex items-center gap-3 mb-4">
                 <button
-                  style={btn("ghost", { padding: "0.4rem 0.8rem", fontSize: "0.8rem" })}
+                  className="font-sans text-sm text-warm-500 border border-warm-200 px-3 py-2 rounded-xl bg-white hover:bg-cream transition-colors"
                   onClick={() => setActiveConv(null)}
                 >
                   ←
                 </button>
-
-                <Avatar emoji={matchUser?.avatar} size={36} />
-
+                <Avatar emoji={matchUser?.avatar} size="w-10 h-10" />
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>
-                    {matchUser?.name}
-                  </div>
-                  <div style={body({ fontSize: "0.75rem" })}>
-                    📍 {matchUser?.location}
-                  </div>
+                  <div className="font-sans font-semibold text-warm-800 text-sm">{matchUser?.name}</div>
+                  <div className="font-sans text-warm-400 text-xs">📍 {matchUser?.location}</div>
                 </div>
-
                 {!isConfirmed && (
                   <button
-                    style={btn("primary", {
-                      marginLeft: "auto",
-                      fontSize: "0.75rem",
-                      padding: "0.5rem 0.9rem",
-                    })}
+                    className="ml-auto bg-terracotta text-white font-sans font-semibold text-xs px-4 py-2 rounded-xl hover:bg-terracotta-dark transition-all"
                     onClick={() => confirmExchange(activeConv)}
                   >
                     {t.confirm_exchange}
                   </button>
                 )}
-
                 {isConfirmed && (
-                  <span
-                    style={{
-                      ...tag(),
-                      color: "#6ED9A0",
-                      marginLeft: "auto",
-                    }}
-                  >
+                  <span className="ml-auto text-xs tracking-wider uppercase text-sage-dark font-sans font-medium">
                     {t.exchange_confirmed}
                   </span>
                 )}
               </div>
 
-              <div
-                style={{
-                  flex: 1,
-                  overflowY: "auto",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.75rem",
-                  paddingBottom: "1rem",
-                }}
-              >
+              <div className="flex-1 overflow-y-auto flex flex-col gap-3 pb-4">
                 {msgs.map((msg, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      justifyContent: msg.from === "me" ? "flex-end" : "flex-start",
-                    }}
-                  >
+                  <div key={i} className={`flex ${msg.from === "me" ? "justify-end" : "justify-start"}`}>
                     <div
-                      style={{
-                        maxWidth: "75%",
-                        padding: "0.75rem 1rem",
-                        borderRadius:
-                          msg.from === "me"
-                            ? "16px 16px 4px 16px"
-                            : "16px 16px 16px 4px",
-                        background:
-                          msg.from === "me"
-                            ? "rgba(212,175,106,0.15)"
-                            : C.bgCard2,
-                        border: `1px solid ${
-                          msg.from === "me" ? C.borderGold : C.border
-                        }`,
-                      }}
+                      className={`max-w-[75%] px-4 py-3 border ${
+                        msg.from === "me"
+                          ? "bg-terracotta/8 border-terracotta/15 rounded-2xl rounded-br-sm"
+                          : "bg-white border-warm-100 rounded-2xl rounded-bl-sm shadow-soft"
+                      }`}
                     >
                       {msg.redacted && !isConfirmed ? (
-                        <p style={body({ fontSize: "0.82rem", color: "#E07070" })}>
-                          🔒 {t.redacted_notice}
-                        </p>
+                        <p className="font-sans text-sm text-terracotta">🔒 {t.redacted_notice}</p>
                       ) : (
-                        <p style={body({ fontSize: "0.85rem", color: C.text })}>
-                          {msg.text}
-                        </p>
+                        <p className="font-sans text-sm text-warm-700">{msg.text}</p>
                       )}
-
-                      <p
-                        style={body({
-                          fontSize: "0.68rem",
-                          marginTop: "0.3rem",
-                          textAlign: "right",
-                        })}
-                      >
-                        {msg.time}
-                      </p>
+                      <p className="font-sans text-[0.65rem] text-warm-300 mt-1.5 text-right">{msg.time}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  gap: "0.5rem",
-                  paddingTop: "0.75rem",
-                  borderTop: `1px solid ${C.border}`,
-                }}
-              >
+              <div className="flex gap-2 pt-3 border-t border-warm-100">
                 <input
-                  style={{ ...input(), flex: 1, fontSize: "0.85rem" }}
+                  className="flex-1 px-4 py-3 rounded-xl border border-warm-200 bg-white text-warm-700 font-sans text-sm outline-none focus:border-terracotta/50 transition-all"
                   placeholder={t.type_msg}
                   value={msgInput}
                   onChange={(e) => setMsgInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 />
                 <button
-                  style={btn("primary", { padding: "0.85rem 1.25rem" })}
+                  className="bg-terracotta text-white font-sans font-semibold text-sm px-5 py-3 rounded-xl hover:bg-terracotta-dark transition-all"
                   onClick={sendMessage}
                 >
                   {t.send}
                 </button>
               </div>
-
-              <p
-                style={body({
-                  fontSize: "0.7rem",
-                  textAlign: "center",
-                  marginTop: "0.5rem",
-                })}
-              >
-                🔒{" "}
-                {lang === "fr"
-                  ? "Coordonnées masquées automatiquement jusqu'à la confirmation d'échange"
-                  : "Contact info auto-hidden until exchange confirmation"}
+              <p className="font-sans text-warm-300 text-xs text-center mt-3">
+                🔒 {lang === "fr" ? "Coordonnées masquées automatiquement jusqu'à la confirmation d'échange" : "Contact info auto-hidden until exchange confirmation"}
               </p>
             </div>
           );
         })()}
 
+        {/* ── EXCHANGES TAB ── */}
         {tab === "exchanges" && (
           <div>
-            <div style={{ ...tag(), marginBottom: "1.5rem" }}>{t.nav_exchanges}</div>
+            <p className="text-xs tracking-[0.2em] uppercase text-terracotta font-sans font-medium mb-5">{t.nav_exchanges}</p>
 
             {confirmedExchanges.length === 0 ? (
-              <div style={card({ textAlign: "center" })}>
-                <p style={{ fontSize: "2rem", marginBottom: "1rem" }}>🏡</p>
-                <p style={body()}>
+              <div className="bg-white rounded-2xl shadow-soft p-8 text-center border border-warm-100">
+                <p className="text-3xl mb-3">🏡</p>
+                <p className="font-sans text-warm-500 text-sm">
                   {lang === "fr"
                     ? "Aucun échange confirmé pour l'instant. Matchez et confirmez un échange pour commencer."
                     : "No confirmed exchanges yet. Match and confirm an exchange to get started."}
@@ -1876,34 +850,16 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
               confirmedExchanges.map((uid) => {
                 const u = MOCK_USERS.find((x) => x.id === uid);
                 if (!u) return null;
-
                 return (
-                  <div
-                    key={uid}
-                    style={card({
-                      marginBottom: "1rem",
-                      borderColor: "#6ED9A040",
-                    })}
-                  >
-                    <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-                      <Avatar emoji={u.avatar} size={44} />
+                  <div key={uid} className="bg-white rounded-2xl shadow-soft p-5 mb-3 border border-sage/20">
+                    <div className="flex gap-3 items-center">
+                      <Avatar emoji={u.avatar} size="w-12 h-12" />
                       <div>
-                        <div style={{ fontWeight: 600, marginBottom: "0.25rem" }}>
-                          {u.name}
-                        </div>
-                        <div style={body({ fontSize: "0.8rem" })}>📍 {u.location}</div>
-                        <div
-                          style={{
-                            ...tag(),
-                            color: "#6ED9A0",
-                            marginTop: "0.5rem",
-                          }}
-                        >
-                          ✓{" "}
-                          {lang === "fr"
-                            ? "Échange confirmé — Contacts révélés"
-                            : "Confirmed — Contacts revealed"}
-                        </div>
+                        <div className="font-sans font-semibold text-warm-800 mb-1">{u.name}</div>
+                        <div className="font-sans text-warm-400 text-sm">📍 {u.location}</div>
+                        <p className="text-xs tracking-wider uppercase text-sage-dark font-sans font-medium mt-2">
+                          ✓ {lang === "fr" ? "Échange confirmé — Contacts révélés" : "Confirmed — Contacts revealed"}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -1913,65 +869,50 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
           </div>
         )}
 
+        {/* ── PROFILE TAB ── */}
         {tab === "profile" && (
           <div>
-            <div style={{ ...tag(), marginBottom: "1.5rem" }}>{t.nav_profile}</div>
+            <p className="text-xs tracking-[0.2em] uppercase text-terracotta font-sans font-medium mb-5">{t.nav_profile}</p>
 
-            <div style={card({ marginBottom: "1rem" })}>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "1rem",
-                  alignItems: "center",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                <Avatar emoji="👤" size={60} />
+            <div className="bg-white rounded-2xl shadow-soft p-6 mb-4 border border-warm-100">
+              <div className="flex gap-4 items-center mb-6">
+                <Avatar emoji="👤" size="w-16 h-16" />
                 <div>
-                  <div
-                    style={{
-                      fontSize: "1.2rem",
-                      fontWeight: 700,
-                      marginBottom: "0.25rem",
-                    }}
-                  >
-                    {user.name}
-                  </div>
-                  <div style={body({ fontSize: "0.82rem" })}>{user.email}</div>
-                  {isPremium && <span style={{ ...tag(), color: C.gold }}>✦ Member</span>}
+                  <div className="font-serif text-xl font-bold text-warm-800 mb-1">{user.name}</div>
+                  <div className="font-sans text-warm-400 text-sm">{user.email}</div>
+                  {isPremium && (
+                    <span className="text-xs tracking-[0.15em] uppercase text-terracotta font-sans font-medium mt-1 inline-block">✦ Member</span>
+                  )}
                 </div>
               </div>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "0.75rem",
-                }}
-              >
+              <div className="grid grid-cols-2 gap-3">
                 {Object.entries(answers)
                   .slice(0, 4)
                   .map(([k, v]) => (
-                    <div key={k} style={card({ padding: "0.75rem" })}>
-                      <div style={{ ...tag(), marginBottom: "0.25rem" }}>
+                    <div key={k} className="bg-cream-light rounded-xl p-3 border border-warm-100">
+                      <p className="text-xs tracking-[0.15em] uppercase text-terracotta font-sans font-medium mb-1">
                         {k.replace(/_/g, " ")}
-                      </div>
-                      <div style={body({ fontSize: "0.82rem", color: C.text })}>
+                      </p>
+                      <p className="font-sans text-warm-700 text-sm">
                         {Array.isArray(v) ? v.join(", ") : v}
-                      </div>
+                      </p>
                     </div>
                   ))}
               </div>
             </div>
 
             {!isPremium && (
-              <div style={card({ borderColor: C.borderGold, textAlign: "center" })}>
-                <p style={body({ marginBottom: "1rem" })}>
+              <div className="bg-white rounded-2xl shadow-soft p-6 text-center border border-terracotta/20">
+                <p className="font-sans text-warm-500 text-sm mb-4">
                   {lang === "fr"
                     ? "Passez en Member pour débloquer la messagerie et les échanges."
                     : "Upgrade to Member to unlock messaging and exchanges."}
                 </p>
-                <button style={btn("primary")} onClick={onUpgrade}>
+                <button
+                  className="bg-terracotta text-white font-sans font-semibold text-sm px-6 py-3 rounded-xl hover:bg-terracotta-dark hover:shadow-soft transition-all duration-300 animate-btn-glow"
+                  onClick={onUpgrade}
+                >
                   {t.upgrade}
                 </button>
               </div>
@@ -1979,44 +920,25 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade }) => {
           </div>
         )}
 
+        {/* ── ADMIN TAB ── */}
         {tab === "admin" && isAdmin && (
           <div>
-            <div style={{ ...tag(), marginBottom: "0.5rem" }}>Admin Panel</div>
-            <p style={body({ marginBottom: "1.5rem" })}>
-              Vue complète — matche les utilisateurs manuellement.
-            </p>
+            <p className="text-xs tracking-[0.2em] uppercase text-terracotta font-sans font-medium mb-2">Admin Panel</p>
+            <p className="font-sans text-warm-400 text-sm mb-5">Vue complète — matche les utilisateurs manuellement.</p>
 
             {MOCK_USERS.map((u) => (
-              <div key={u.id} style={card({ marginBottom: "0.75rem" })}>
-                <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-                  <Avatar emoji={u.avatar} size={40} />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, marginBottom: "0.1rem" }}>
-                      {u.name} — {u.location}
-                    </div>
-                    <div style={body({ fontSize: "0.78rem" })}>{u.bio}</div>
+              <div key={u.id} className="bg-white rounded-2xl shadow-soft p-4 mb-3 border border-warm-100">
+                <div className="flex gap-3 items-center">
+                  <Avatar emoji={u.avatar} size="w-11 h-11" />
+                  <div className="flex-1">
+                    <div className="font-sans font-semibold text-warm-800 text-sm">{u.name} — {u.location}</div>
+                    <div className="font-sans text-warm-400 text-xs">{u.bio}</div>
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.4rem",
-                    }}
-                  >
-                    <button
-                      style={btn("primary", {
-                        fontSize: "0.72rem",
-                        padding: "0.4rem 0.8rem",
-                      })}
-                    >
+                  <div className="flex flex-col gap-2">
+                    <button className="bg-terracotta text-white font-sans font-semibold text-xs px-3 py-2 rounded-lg hover:bg-terracotta-dark transition-all">
                       Matcher
                     </button>
-                    <button
-                      style={btn("ghost", {
-                        fontSize: "0.72rem",
-                        padding: "0.4rem 0.8rem",
-                      })}
-                    >
+                    <button className="font-sans text-xs text-warm-500 border border-warm-200 px-3 py-2 rounded-lg hover:bg-cream transition-colors">
                       Profil
                     </button>
                   </div>
@@ -2048,40 +970,30 @@ export default function HestiaApp() {
     setScreen("dashboard");
   };
 
-const handleUpgrade = async () => {
-  try {
-    const res = await fetch("/api/create-checkout-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      alert("Erreur : " + data.error);
+  const handleUpgrade = async () => {
+    try {
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Erreur : " + data.error);
+      }
+    } catch (err) {
+      alert("Erreur réseau : " + err.message);
     }
-  } catch (err) {
-    alert("Erreur réseau : " + err.message);
-  }
-};
-
+  };
 
   return (
     <div>
       {screen === "landing" && (
-        <LandingPage
-          lang={lang}
-          setLang={setLang}
-          onStart={() => setScreen("auth")}
-        />
+        <LandingPage lang={lang} setLang={setLang} onStart={() => setScreen("auth")} />
       )}
-
       {screen === "auth" && <AuthPage lang={lang} onAuth={handleAuth} />}
-
-      {screen === "onboarding" && (
-        <Questionnaire lang={lang} onComplete={handleComplete} />
-      )}
-
+      {screen === "onboarding" && <Questionnaire lang={lang} onComplete={handleComplete} />}
       {screen === "dashboard" && (
         <Dashboard
           lang={lang}
