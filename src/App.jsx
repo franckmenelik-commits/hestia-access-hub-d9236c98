@@ -589,7 +589,7 @@ const LandingPage = ({ lang, setLang, onStart }) => {
     <div className="min-h-screen bg-cream-light">
       {/* Nav */}
       <nav className="flex justify-between items-center px-6 md:px-10 py-5">
-        <span className="font-serif text-xl tracking-widest text-warm-800 italic">HESTIA</span>
+        <div className="flex items-center gap-2"><img src={hestiaLogo} alt="Hestia" className="h-8 w-8" /><span className="font-serif text-xl tracking-widest text-warm-800 italic">HESTIA</span></div>
         <div className="flex gap-3 items-center">
           <button onClick={() => setLang((l) => (l === "fr" ? "en" : "fr"))} className="px-4 py-2 text-sm font-sans text-warm-600 border border-warm-200 rounded-xl hover:bg-cream transition-colors">
             {lang === "fr" ? "EN" : "FR"}
