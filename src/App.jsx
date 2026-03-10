@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import heroImg from "./assets/hero-home.jpg";
+import hestiaLogo from "./assets/hestia-logo.png";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { supabase } from "./lib/supabase.js";
 
@@ -588,7 +589,7 @@ const LandingPage = ({ lang, setLang, onStart }) => {
     <div className="min-h-screen bg-cream-light">
       {/* Nav */}
       <nav className="flex justify-between items-center px-6 md:px-10 py-5">
-        <span className="font-serif text-xl tracking-widest text-warm-800 italic">HESTIA</span>
+        <div className="flex items-center gap-2"><img src={hestiaLogo} alt="Hestia" className="h-8 w-8" /><span className="font-serif text-xl tracking-widest text-warm-800 italic">HESTIA</span></div>
         <div className="flex gap-3 items-center">
           <button onClick={() => setLang((l) => (l === "fr" ? "en" : "fr"))} className="px-4 py-2 text-sm font-sans text-warm-600 border border-warm-200 rounded-xl hover:bg-cream transition-colors">
             {lang === "fr" ? "EN" : "FR"}
@@ -753,7 +754,7 @@ const AuthPage = ({ lang, onAuth }) => {
     <div className="min-h-screen bg-cream-light flex items-center justify-center px-5">
       <div className="max-w-md w-full">
         <div className="text-center mb-10">
-          <span className="font-serif text-xl tracking-widest text-warm-800 italic block mb-3">HESTIA</span>
+          <div className="flex items-center justify-center gap-2 mb-3"><img src={hestiaLogo} alt="Hestia" className="h-8 w-8" /><span className="font-serif text-xl tracking-widest text-warm-800 italic">HESTIA</span></div>
           <h2 className="font-serif text-3xl font-bold text-warm-900">
             {isLogin ? (lang === "fr" ? "Bon retour" : "Welcome back") : (lang === "fr" ? "Rejoindre Hestia" : "Join Hestia")}
           </h2>
@@ -839,7 +840,7 @@ const Questionnaire = ({ lang, onComplete }) => {
     <div className="min-h-screen bg-cream-light flex items-center justify-center px-5 py-8">
       <div className="max-w-lg w-full">
         <div className="text-center mb-8">
-          <span className="font-serif text-base tracking-widest text-warm-800 italic">HESTIA</span>
+          <div className="flex items-center justify-center gap-2"><img src={hestiaLogo} alt="Hestia" className="h-7 w-7" /><span className="font-serif text-base tracking-widest text-warm-800 italic">HESTIA</span></div>
         </div>
 
         {/* Progress bar */}
@@ -968,7 +969,7 @@ const Dashboard = ({ lang, user, answers, isPremium, onUpgrade, onLogout }) => {
     <div className="min-h-screen bg-cream-light flex flex-col">
       {/* Top bar */}
       <div className="px-5 py-4 border-b border-warm-100 bg-white/80 backdrop-blur-sm flex justify-between items-center sticky top-0 z-50">
-        <span className="font-serif text-base tracking-widest text-warm-800 italic">HESTIA</span>
+        <div className="flex items-center gap-2"><img src={hestiaLogo} alt="Hestia" className="h-7 w-7" /><span className="font-serif text-base tracking-widest text-warm-800 italic">HESTIA</span></div>
         <div className="flex items-center gap-3">
           <HestiaPointsBadge points={userPoints} />
           {isPremium && (
