@@ -658,9 +658,9 @@ const LandingPage = ({ onOpenAuth, onOpenWaitlist, onNavigate }) => {
             <div>
               <h4 className="font-sans text-sm font-semibold text-white mb-4 uppercase tracking-wider">Plateforme</h4>
               <ul className="space-y-2">
-                {["Comment ça marche", "Tarifs", "Assurance"].map((item) => (
-                  <li key={item}><button className="font-sans text-sm text-warm-400 hover:text-terracotta-light transition-colors">{item}</button></li>
-                ))}
+                <li><button onClick={() => onNavigate && onNavigate("comment-ca-marche")} className="font-sans text-sm text-warm-400 hover:text-terracotta-light transition-colors">Comment ça marche</button></li>
+                <li><button onClick={() => scrollTo("pricing")} className="font-sans text-sm text-warm-400 hover:text-terracotta-light transition-colors">Tarifs</button></li>
+                <li><button onClick={() => onNavigate && onNavigate("assurance")} className="font-sans text-sm text-warm-400 hover:text-terracotta-light transition-colors">Assurance</button></li>
               </ul>
             </div>
             <div>
