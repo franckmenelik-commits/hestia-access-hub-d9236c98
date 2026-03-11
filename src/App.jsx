@@ -448,9 +448,9 @@ const LandingPage = ({ onOpenAuth, onOpenWaitlist }) => {
             <span className="font-serif text-xl tracking-widest text-warm-800 italic">HESTIA</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <button onClick={() => scrollTo("how-it-works")} className="font-sans text-sm text-warm-600 hover:text-terracotta transition-colors">Comment ça marche</button>
+            <button onClick={() => onNavigate ? onNavigate("comment-ca-marche") : scrollTo("how-it-works")} className="font-sans text-sm text-warm-600 hover:text-terracotta transition-colors">Comment ça marche</button>
             <button onClick={() => scrollTo("pricing")} className="font-sans text-sm text-warm-600 hover:text-terracotta transition-colors">Tarifs</button>
-            <button onClick={() => scrollTo("trust")} className="font-sans text-sm text-warm-600 hover:text-terracotta transition-colors">Assurance</button>
+            <button onClick={() => onNavigate ? onNavigate("assurance") : scrollTo("trust")} className="font-sans text-sm text-warm-600 hover:text-terracotta transition-colors">Assurance</button>
           </div>
           <div className="flex gap-3 items-center">
             <button onClick={onOpenAuth} className="font-sans text-sm text-warm-700 hover:text-terracotta transition-colors">Se connecter</button>
