@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.99.1",
+    "framer-motion": "^12.35.2",
     "jspdf": "^4.2.0",
     "mapbox-gl": "^3.19.1",
     "react": "^18.2.0",
