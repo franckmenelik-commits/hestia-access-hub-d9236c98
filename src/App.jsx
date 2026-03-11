@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { User, ClipboardList, Sparkles, Handshake, ShieldCheck, Shield, Lock, Star, MapPin, Home, Heart, Users, Zap, MessageCircle, Globe, Award } from "lucide-react";
 import heroImg from "./assets/hero-home.jpg";
 import hestiaLogo from "./assets/hestia-logo.png";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -229,8 +230,10 @@ const ScoreBadge = ({ score, large }) => {
   );
 };
 
-const Avatar = ({ emoji, size = "w-12 h-12" }) => (
-  <div className={`${size} rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center text-xl flex-shrink-0`}>{emoji}</div>
+const Avatar = ({ emoji, initials, size = "w-12 h-12" }) => (
+  <div className={`${size} rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center flex-shrink-0 ${initials ? "font-sans font-bold text-terracotta" : "text-xl"}`}>
+    {initials || emoji}
+  </div>
 );
 
 const NiveauBadge = ({ exchangeCount, compact }) => {
@@ -259,6 +262,7 @@ const HestiaPointsBadge = ({ points }) => (
 const WaitlistModal = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -296,9 +300,11 @@ const WaitlistModal = ({ isOpen, onClose }) => {
         >
           {success ? (
             <div className="text-center py-6">
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-5xl mb-4">🎉</motion.div>
-              <h3 className="font-serif text-2xl font-bold text-warm-900 mb-2">Vous êtes sur la liste !</h3>
-              <p className="font-sans text-warm-500 text-sm mb-6">Nous vous préviendrons dès qu'une place se libère.</p>
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-16 h-16 rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="text-terracotta" size={28} />
+              </motion.div>
+              <h3 className="font-serif text-2xl font-bold text-warm-900 mb-2">✦ Vous êtes sur la liste</h3>
+              <p className="font-sans text-warm-500 text-sm mb-6">Nous vous contactons très bientôt.</p>
               <button onClick={onClose} className="bg-terracotta text-white font-sans font-semibold text-sm px-8 py-3 rounded-xl hover:bg-terracotta-dark transition-all">Fermer</button>
             </div>
           ) : (
@@ -310,10 +316,11 @@ const WaitlistModal = ({ isOpen, onClose }) => {
               <p className="font-sans text-warm-500 text-sm mb-6">Hestia est accessible sur invitation uniquement. Rejoignez <span className="font-semibold text-terracotta">847 personnes</span> sur la liste d'attente.</p>
               {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 mb-4 font-sans text-sm">{error}</div>}
               <input className="w-full px-4 py-3.5 rounded-xl border border-warm-200 bg-cream-light/50 text-warm-800 font-sans text-sm outline-none focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 transition-all mb-3" placeholder="Votre prénom" value={name} onChange={(e) => setName(e.target.value)} />
-              <input className="w-full px-4 py-3.5 rounded-xl border border-warm-200 bg-cream-light/50 text-warm-800 font-sans text-sm outline-none focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 transition-all mb-5" placeholder="Votre email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSubmit()} />
+              <input className="w-full px-4 py-3.5 rounded-xl border border-warm-200 bg-cream-light/50 text-warm-800 font-sans text-sm outline-none focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 transition-all mb-3" placeholder="Votre email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input className="w-full px-4 py-3.5 rounded-xl border border-warm-200 bg-cream-light/50 text-warm-800 font-sans text-sm outline-none focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 transition-all mb-5" placeholder="Quelle ville ?" value={city} onChange={(e) => setCity(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSubmit()} />
               <button className="w-full bg-terracotta text-white font-sans font-semibold text-sm py-3.5 rounded-xl hover:bg-terracotta-dark transition-all disabled:opacity-50 flex items-center justify-center gap-2" onClick={handleSubmit} disabled={loading || !name.trim() || !email.trim()}>
                 {loading && <Spinner />}
-                {loading ? "Envoi..." : "Demander une invitation"}
+                {loading ? "Envoi..." : "Rejoindre la liste"}
               </button>
             </>
           )}
@@ -363,14 +370,14 @@ const SocialTicker = () => {
   ];
   const doubled = [...items, ...items];
   return (
-    <div className="overflow-hidden bg-warm-800 py-3">
+    <div className="overflow-hidden bg-cream py-2 border-b border-warm-100">
       <motion.div
-        className="flex whitespace-nowrap gap-12"
+        className="flex whitespace-nowrap gap-10"
         animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
       >
         {doubled.map((item, i) => (
-          <span key={i} className="font-sans text-sm text-warm-300 tracking-wide">{item}</span>
+          <span key={i} className="font-sans text-xs text-terracotta/70 tracking-wide">{item}</span>
         ))}
       </motion.div>
     </div>
@@ -428,7 +435,7 @@ const HestiaPassport = ({ user }) => {
 };
 
 // ── LANDING PAGE ─────────────────────────────────────────────
-const LandingPage = ({ onOpenAuth, onOpenWaitlist }) => {
+const LandingPage = ({ onOpenAuth, onOpenWaitlist, onNavigate }) => {
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
@@ -441,9 +448,9 @@ const LandingPage = ({ onOpenAuth, onOpenWaitlist }) => {
             <span className="font-serif text-xl tracking-widest text-warm-800 italic">HESTIA</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <button onClick={() => scrollTo("how-it-works")} className="font-sans text-sm text-warm-600 hover:text-terracotta transition-colors">Comment ça marche</button>
+            <button onClick={() => onNavigate ? onNavigate("comment-ca-marche") : scrollTo("how-it-works")} className="font-sans text-sm text-warm-600 hover:text-terracotta transition-colors">Comment ça marche</button>
             <button onClick={() => scrollTo("pricing")} className="font-sans text-sm text-warm-600 hover:text-terracotta transition-colors">Tarifs</button>
-            <button onClick={() => scrollTo("trust")} className="font-sans text-sm text-warm-600 hover:text-terracotta transition-colors">Assurance</button>
+            <button onClick={() => onNavigate ? onNavigate("assurance") : scrollTo("trust")} className="font-sans text-sm text-warm-600 hover:text-terracotta transition-colors">Assurance</button>
           </div>
           <div className="flex gap-3 items-center">
             <button onClick={onOpenAuth} className="font-sans text-sm text-warm-700 hover:text-terracotta transition-colors">Se connecter</button>
@@ -453,6 +460,9 @@ const LandingPage = ({ onOpenAuth, onOpenWaitlist }) => {
           </div>
         </div>
       </nav>
+
+      {/* Social Proof Ticker — right below nav */}
+      <SocialTicker />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -491,25 +501,25 @@ const LandingPage = ({ onOpenAuth, onOpenWaitlist }) => {
         </div>
       </section>
 
-      {/* Social Proof Ticker */}
-      <SocialTicker />
 
       {/* How it Works */}
       <section id="how-it-works" className="max-w-5xl mx-auto px-6 py-20 md:py-28">
         <p className="text-xs tracking-[0.25em] uppercase text-terracotta font-sans font-medium text-center mb-3">Comment ça marche</p>
         <h2 className="font-serif text-3xl md:text-4xl font-bold text-warm-900 text-center mb-16">4 étapes vers votre prochain échange</h2>
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {[
-            { step: "01", icon: "👤", title: "Créez votre profil", desc: "Décrivez votre maison, votre style de vie et vos envies de voyage." },
-            { step: "02", icon: "📝", title: "Répondez au questionnaire", desc: "Notre algorithme analyse 8 dimensions de compatibilité." },
-            { step: "03", icon: "✨", title: "Recevez vos matchs", desc: "Des suggestions personnalisées avec score de compatibilité détaillé." },
-            { step: "04", icon: "🤝", title: "Échangez en confiance", desc: "Assurance incluse, contrat automatique, contacts protégés." },
+            { step: "01", Icon: User, title: "Créez votre profil", desc: "Décrivez votre maison, votre style de vie et vos envies de voyage." },
+            { step: "02", Icon: ClipboardList, title: "Répondez au questionnaire", desc: "Notre algorithme analyse 8 dimensions de compatibilité." },
+            { step: "03", Icon: Sparkles, title: "Recevez vos matchs", desc: "Des suggestions personnalisées avec score de compatibilité détaillé." },
+            { step: "04", Icon: Handshake, title: "Échangez en confiance", desc: "Assurance incluse, contrat automatique, contacts protégés." },
           ].map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.5 }} className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-terracotta/8 border border-terracotta/15 flex items-center justify-center text-2xl">{item.icon}</div>
+              <div className="w-14 h-14 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center">
+                <item.Icon className="text-terracotta" size={24} />
+              </div>
               <p className="font-sans text-[0.65rem] tracking-[0.2em] uppercase text-terracotta mb-2">{item.step}</p>
-              <h3 className="font-serif text-lg font-bold text-warm-800 mb-2">{item.title}</h3>
-              <p className="font-sans text-warm-500 text-sm leading-relaxed">{item.desc}</p>
+              <h3 className="font-serif text-base md:text-lg font-bold text-warm-800 mb-2">{item.title}</h3>
+              <p className="font-sans text-warm-500 text-xs md:text-sm leading-relaxed">{item.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -539,13 +549,23 @@ const LandingPage = ({ onOpenAuth, onOpenWaitlist }) => {
         </div>
       </section>
 
-      {/* Live Counter */}
-      <section className="py-16 bg-gradient-to-r from-terracotta to-terracotta-dark text-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3">
-            <AnimatedCounter target={1247} /> maisons disponibles
-          </h2>
-          <p className="font-sans text-white/70 text-lg">dans <span className="font-semibold text-white">34 pays</span> à travers le monde</p>
+      {/* Stats Section */}
+      <section className="py-16 md:py-20 bg-cream">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="grid grid-cols-3 gap-4 md:gap-8 text-center">
+            <div>
+              <p className="font-serif text-3xl md:text-5xl font-bold text-terracotta"><AnimatedCounter target={1247} /></p>
+              <p className="font-sans text-warm-500 text-xs md:text-sm mt-1 md:mt-2">maisons disponibles</p>
+            </div>
+            <div>
+              <p className="font-serif text-3xl md:text-5xl font-bold text-terracotta"><AnimatedCounter target={34} /></p>
+              <p className="font-sans text-warm-500 text-xs md:text-sm mt-1 md:mt-2">pays</p>
+            </div>
+            <div>
+              <p className="font-serif text-3xl md:text-5xl font-bold text-terracotta"><AnimatedCounter target={98} />%</p>
+              <p className="font-sans text-warm-500 text-xs md:text-sm mt-1 md:mt-2">de matchs satisfaits</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -592,13 +612,13 @@ const LandingPage = ({ onOpenAuth, onOpenWaitlist }) => {
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-warm-900 text-center mb-16">Ce que nos membres disent</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { name: "Sophie L.", city: "Lyon", avatar: "👩‍🦰", text: "Notre échange avec une famille à Lisbonne a été magique. Le matching est incroyablement précis — on avait les mêmes valeurs, les mêmes envies. Nos enfants sont devenus amis !", rating: 5 },
-              { name: "Marc & Julie R.", city: "Montréal", avatar: "👫", text: "Après 4 échanges via Hestia, on ne réserve plus d'hôtels. La confiance est immédiate grâce au Passport et aux avis vérifiés. Le contrat automatique rassure tout le monde.", rating: 5 },
-              { name: "Kenji H.", city: "Tokyo", avatar: "🧑‍💻", text: "En tant que digital nomad, Hestia m'a permis de vivre 3 mois à Barcelone en échangeant mon appart de Shinjuku. Le score de compatibilité ne ment pas — 94% et c'était parfait.", rating: 5 },
+              { name: "Sophie L.", city: "Lyon", initials: "S", text: "Notre échange avec une famille à Lisbonne a été magique. Le matching est incroyablement précis — on avait les mêmes valeurs, les mêmes envies. Nos enfants sont devenus amis !", rating: 5 },
+              { name: "Marc & Julie R.", city: "Montréal", initials: "MJ", text: "Après 4 échanges via Hestia, on ne réserve plus d'hôtels. La confiance est immédiate grâce au Passport et aux avis vérifiés. Le contrat automatique rassure tout le monde.", rating: 5 },
+              { name: "Kenji H.", city: "Tokyo", initials: "K", text: "En tant que digital nomad, Hestia m'a permis de vivre 3 mois à Barcelone en échangeant mon appart de Shinjuku. Le score de compatibilité ne ment pas — 94% et c'était parfait.", rating: 5 },
             ].map((t, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="bg-cream-light/50 rounded-2xl p-6 border border-warm-100">
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="bg-cream-light/50 rounded-2xl p-5 md:p-6 border border-warm-100">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center text-xl">{t.avatar}</div>
+                  <div className="w-11 h-11 md:w-12 md:h-12 rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center font-sans font-bold text-terracotta text-sm flex-shrink-0">{t.initials}</div>
                   <div>
                     <p className="font-sans text-sm font-semibold text-warm-800">{t.name}</p>
                     <p className="font-sans text-xs text-warm-400">📍 {t.city}</p>
@@ -638,9 +658,9 @@ const LandingPage = ({ onOpenAuth, onOpenWaitlist }) => {
             <div>
               <h4 className="font-sans text-sm font-semibold text-white mb-4 uppercase tracking-wider">Plateforme</h4>
               <ul className="space-y-2">
-                {["Comment ça marche", "Tarifs", "Assurance"].map((item) => (
-                  <li key={item}><button className="font-sans text-sm text-warm-400 hover:text-terracotta-light transition-colors">{item}</button></li>
-                ))}
+                <li><button onClick={() => onNavigate && onNavigate("comment-ca-marche")} className="font-sans text-sm text-warm-400 hover:text-terracotta-light transition-colors">Comment ça marche</button></li>
+                <li><button onClick={() => scrollTo("pricing")} className="font-sans text-sm text-warm-400 hover:text-terracotta-light transition-colors">Tarifs</button></li>
+                <li><button onClick={() => onNavigate && onNavigate("assurance")} className="font-sans text-sm text-warm-400 hover:text-terracotta-light transition-colors">Assurance</button></li>
               </ul>
             </div>
             <div>
@@ -1234,6 +1254,160 @@ const Dashboard = ({ user, answers, isPremium, onUpgrade, onLogout, showToast })
   );
 };
 
+// ── ASSURANCE PAGE ───────────────────────────────────────────
+const AssurancePage = ({ onBack, onOpenWaitlist }) => (
+  <div className="min-h-screen bg-cream-light">
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-warm-100">
+      <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
+        <button onClick={onBack} className="flex items-center gap-2">
+          <img src={hestiaLogo} alt="Hestia" className="h-8 w-8" />
+          <span className="font-serif text-xl tracking-widest text-warm-800 italic">HESTIA</span>
+        </button>
+        <button onClick={onBack} className="font-sans text-sm text-warm-500 hover:text-terracotta transition-colors">← Retour</button>
+      </div>
+    </nav>
+    <div className="max-w-3xl mx-auto px-6 py-16 md:py-24">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <p className="text-xs tracking-[0.25em] uppercase text-terracotta font-sans font-medium mb-3">Protection</p>
+        <h1 className="font-serif text-3xl md:text-5xl font-bold text-warm-900 mb-6">Votre échange, protégé de A à Z</h1>
+        <p className="font-sans text-warm-500 text-lg leading-relaxed mb-12">Hestia s'associe à <span className="font-semibold text-warm-700">Safely</span>, leader mondial de l'assurance pour l'hébergement partagé, pour couvrir chaque échange automatiquement.</p>
+
+        <div className="space-y-6 mb-16">
+          {[
+            { Icon: ShieldCheck, title: "Couverture jusqu'à 50 000$", desc: "Dommages matériels, vol, dégâts accidentels — chaque échange est couvert sans frais supplémentaires pour les membres." },
+            { Icon: Shield, title: "Activation automatique", desc: "Dès qu'un échange est confirmé par les deux parties, la couverture se déclenche automatiquement. Aucune démarche à faire." },
+            { Icon: Lock, title: "Vérification d'identité", desc: "Chaque membre passe une vérification d'identité avant de pouvoir participer à un échange. Document officiel + selfie." },
+            { Icon: Star, title: "Avis vérifiés uniquement", desc: "Seuls les membres ayant réellement complété un échange peuvent laisser un avis. Zéro faux avis, confiance maximale." },
+          ].map((item, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex gap-4 p-6 rounded-2xl border border-warm-100 bg-white hover:shadow-soft transition-shadow">
+              <div className="w-12 h-12 rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center flex-shrink-0">
+                <item.Icon className="text-terracotta" size={22} />
+              </div>
+              <div>
+                <h3 className="font-serif text-lg font-bold text-warm-800 mb-1">{item.title}</h3>
+                <p className="font-sans text-warm-500 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <h2 className="font-serif text-2xl font-bold text-warm-900 mb-8">Questions fréquentes</h2>
+        <div className="space-y-4 mb-16">
+          {[
+            { q: "Que couvre exactement l'assurance Safely ?", a: "Dommages matériels au logement et à son contenu, vol constaté pendant l'échange, dégâts accidentels (bris de vitre, mobilier, électroménager). La couverture va jusqu'à 50 000$ par échange." },
+            { q: "Dois-je payer un supplément pour l'assurance ?", a: "Non. L'assurance Safely est incluse dans votre abonnement Member ou Premium. Aucun frais supplémentaire." },
+            { q: "Que se passe-t-il en cas de sinistre ?", a: "Signalez le dommage dans les 24h via l'app. Notre équipe et Safely traitent votre dossier sous 48h. Photos et description suffisent dans la majorité des cas." },
+            { q: "Les animaux domestiques sont-ils couverts ?", a: "Les dégâts causés par des animaux sont couverts si l'accueil d'animaux a été accepté par les deux parties dans le contrat d'échange." },
+            { q: "L'assurance s'applique-t-elle aussi à la voiture partagée ?", a: "Non, la couverture Safely concerne uniquement le logement. Pour la voiture, nous recommandons de vérifier votre assurance auto personnelle." },
+          ].map((item, i) => (
+            <details key={i} className="bg-white rounded-2xl border border-warm-100 overflow-hidden group">
+              <summary className="p-5 font-sans text-sm font-semibold text-warm-800 cursor-pointer hover:text-terracotta transition-colors list-none flex justify-between items-center">
+                {item.q}
+                <span className="text-warm-300 group-open:rotate-45 transition-transform text-lg">+</span>
+              </summary>
+              <div className="px-5 pb-5">
+                <p className="font-sans text-warm-500 text-sm leading-relaxed">{item.a}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+
+        <div className="text-center bg-white rounded-3xl p-8 md:p-12 border border-warm-100 shadow-soft">
+          <h3 className="font-serif text-2xl font-bold text-warm-900 mb-3">Échangez l'esprit tranquille</h3>
+          <p className="font-sans text-warm-500 text-sm mb-6">Rejoignez Hestia et bénéficiez de la protection Safely dès votre premier échange.</p>
+          <button onClick={onOpenWaitlist} className="bg-terracotta text-white font-sans font-semibold text-base px-8 py-4 rounded-2xl hover:bg-terracotta-dark hover:shadow-elevated hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+            Demander une invitation
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  </div>
+);
+
+// ── COMMENT ÇA MARCHE PAGE ──────────────────────────────────
+const CommentCaMarchePage = ({ onBack, onOpenWaitlist }) => {
+  const dimensions = [
+    { Icon: Globe, label: "Complémentarité géographique", desc: "Vous voulez aller là-bas, ils veulent venir ici. L'algorithme favorise les destinations croisées.", pct: 20 },
+    { Icon: Home, label: "Alignement d'ambiance", desc: "Design épuré, chaleureux, nature ou urbain — on matche les styles de logement similaires.", pct: 15 },
+    { Icon: Users, label: "Style hôte / invité", desc: "Guide local ou discret ? Ultra-respectueux ou à l'aise ? On vérifie la compatibilité relationnelle.", pct: 15 },
+    { Icon: ShieldCheck, label: "Vérification dealbreakers", desc: "Fumeur vs non-fumeur, animaux, enfants — un seul conflit = score à 0% sur cette dimension.", pct: 15 },
+    { Icon: Zap, label: "Rythme de voyage", desc: "Voyageur occasionnel ou nomade ? On synchronise les fréquences pour maximiser les opportunités.", pct: 10 },
+    { Icon: Award, label: "Score de confiance", desc: "Basé sur les avis, les échanges complétés et la vérification d'identité.", pct: 10 },
+    { Icon: MessageCircle, label: "Style de communication", desc: "Réactif, détaillé, décontracté — la communication fluide est clé pour un bon échange.", pct: 8 },
+    { Icon: Heart, label: "Étape de vie", desc: "Famille, couple, solo, retraité — on matche les modes de vie similaires.", pct: 7 },
+  ];
+
+  return (
+    <div className="min-h-screen bg-cream-light">
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-warm-100">
+        <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
+          <button onClick={onBack} className="flex items-center gap-2">
+            <img src={hestiaLogo} alt="Hestia" className="h-8 w-8" />
+            <span className="font-serif text-xl tracking-widest text-warm-800 italic">HESTIA</span>
+          </button>
+          <button onClick={onBack} className="font-sans text-sm text-warm-500 hover:text-terracotta transition-colors">← Retour</button>
+        </div>
+      </nav>
+      <div className="max-w-3xl mx-auto px-6 py-16 md:py-24">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <p className="text-xs tracking-[0.25em] uppercase text-terracotta font-sans font-medium mb-3">Comment ça marche</p>
+          <h1 className="font-serif text-3xl md:text-5xl font-bold text-warm-900 mb-6">L'algorithme de matching Hestia</h1>
+          <p className="font-sans text-warm-500 text-lg leading-relaxed mb-12">Pas de hasard. Notre algorithme analyse <span className="font-semibold text-warm-700">8 dimensions de compatibilité</span> pour vous proposer les meilleurs échanges possibles.</p>
+
+          {/* Steps */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16">
+            {[
+              { step: "01", Icon: User, title: "Créez votre profil", desc: "Décrivez votre maison et vos envies." },
+              { step: "02", Icon: ClipboardList, title: "Questionnaire", desc: "8 questions, 3 minutes." },
+              { step: "03", Icon: Sparkles, title: "Matchs IA", desc: "Score sur 8 dimensions." },
+              { step: "04", Icon: Handshake, title: "Échangez", desc: "Contrat + assurance inclus." },
+            ].map((item, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center bg-white rounded-2xl p-5 border border-warm-100">
+                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center">
+                  <item.Icon className="text-terracotta" size={20} />
+                </div>
+                <p className="font-sans text-[0.6rem] tracking-[0.2em] uppercase text-terracotta mb-1">{item.step}</p>
+                <h3 className="font-serif text-sm font-bold text-warm-800 mb-1">{item.title}</h3>
+                <p className="font-sans text-warm-500 text-xs">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* 8 Dimensions */}
+          <h2 className="font-serif text-2xl font-bold text-warm-900 mb-8">Les 8 dimensions de compatibilité</h2>
+          <div className="space-y-4 mb-16">
+            {dimensions.map((dim, i) => (
+              <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }} className="flex gap-4 items-start p-5 rounded-2xl border border-warm-100 bg-white">
+                <div className="w-11 h-11 rounded-full bg-terracotta/10 border border-terracotta/20 flex items-center justify-center flex-shrink-0">
+                  <dim.Icon className="text-terracotta" size={20} />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-sans text-sm font-semibold text-warm-800">{dim.label}</h3>
+                    <span className="font-sans text-xs text-terracotta font-bold">{dim.pct}%</span>
+                  </div>
+                  <p className="font-sans text-warm-500 text-xs leading-relaxed mb-2">{dim.desc}</p>
+                  <div className="h-1.5 bg-warm-100 rounded-full overflow-hidden">
+                    <motion.div className="h-full bg-terracotta rounded-full" initial={{ width: 0 }} whileInView={{ width: `${dim.pct * 5}%` }} viewport={{ once: true }} transition={{ delay: i * 0.06 + 0.3, duration: 0.6 }} />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center bg-white rounded-3xl p-8 md:p-12 border border-warm-100 shadow-soft">
+            <h3 className="font-serif text-2xl font-bold text-warm-900 mb-3">Prêt à trouver votre match ?</h3>
+            <p className="font-sans text-warm-500 text-sm mb-6">Rejoignez Hestia et découvrez vos premiers matchs en 3 minutes.</p>
+            <button onClick={onOpenWaitlist} className="bg-terracotta text-white font-sans font-semibold text-base px-8 py-4 rounded-2xl hover:bg-terracotta-dark hover:shadow-elevated hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+              Demander une invitation
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
 // ── APP ROOT ─────────────────────────────────────────────────
 export default function HestiaApp() {
   const [screen, setScreen] = useState("landing");
@@ -1259,7 +1433,6 @@ export default function HestiaApp() {
         window.history.replaceState(null, "", window.location.pathname);
       });
     }
-    // Check for success redirect
     if (window.location.pathname === "/success") {
       setScreen("dashboard");
       showToast("Bienvenue dans Hestia Member 🎉");
@@ -1299,6 +1472,11 @@ export default function HestiaApp() {
     setScreen("landing");
   };
 
+  const handleNavigate = (page) => {
+    setScreen(page);
+    window.scrollTo(0, 0);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-cream-light flex items-center justify-center">
@@ -1312,7 +1490,17 @@ export default function HestiaApp() {
       <AnimatePresence mode="wait">
         {screen === "landing" && (
           <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <LandingPage onOpenAuth={() => setScreen("auth")} onOpenWaitlist={() => setWaitlistOpen(true)} />
+            <LandingPage onOpenAuth={() => setScreen("auth")} onOpenWaitlist={() => setWaitlistOpen(true)} onNavigate={handleNavigate} />
+          </motion.div>
+        )}
+        {screen === "assurance" && (
+          <motion.div key="assurance" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <AssurancePage onBack={() => handleNavigate("landing")} onOpenWaitlist={() => setWaitlistOpen(true)} />
+          </motion.div>
+        )}
+        {screen === "comment-ca-marche" && (
+          <motion.div key="ccm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <CommentCaMarchePage onBack={() => handleNavigate("landing")} onOpenWaitlist={() => setWaitlistOpen(true)} />
           </motion.div>
         )}
         {screen === "auth" && (
