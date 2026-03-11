@@ -1516,12 +1516,15 @@ export default function HestiaApp() {
   useEffect(() => {
     // Check for email confirmation redirect (hash contains type=signup or type=recovery)
     const hash = window.location.hash;
+    console.log("[Hestia Auth] URL hash on load:", hash);
     if (hash && (hash.includes("type=signup") || hash.includes("type=magiclink"))) {
-      // User just confirmed their email — show login with success banner
-      setConfirmationBanner(true);
-      setScreen("auth");
-      // Clean up URL hash
-      window.history.replaceState(null, "", window.location.pathname);
+      // Let Supabase process the token first, then show login with success banner
+      supabase.auth.getSession().then(() => {
+        setConfirmationBanner(true);
+        setScreen("auth");
+        // Clean up URL hash after Supabase has processed it
+        window.history.replaceState(null, "", window.location.pathname);
+      });
     }
   }, []);
 
