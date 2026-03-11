@@ -461,6 +461,9 @@ const LandingPage = ({ onOpenAuth, onOpenWaitlist, onNavigate }) => {
         </div>
       </nav>
 
+      {/* Social Proof Ticker — right below nav */}
+      <SocialTicker />
+
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 pt-16 md:pt-24 pb-20 md:pb-32">
