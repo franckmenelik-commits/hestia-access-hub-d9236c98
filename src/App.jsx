@@ -738,9 +738,11 @@ const AuthPage = ({ lang, onAuth, confirmationBanner }) => {
   const handleSubmit = async () => {
     setError("");
     setLoading(true);
+    console.log("[Hestia Auth]", isLogin ? "LOGIN" : "SIGNUP", { email });
     try {
       if (isLogin) {
         const { data, error: err } = await supabase.auth.signInWithPassword({ email, password });
+        console.log("[Hestia Auth] Login result:", { data, error: err });
         if (err) throw err;
         // onAuth will be triggered by onAuthStateChange in HestiaApp
       } else {
@@ -754,6 +756,7 @@ const AuthPage = ({ lang, onAuth, confirmationBanner }) => {
             emailRedirectTo: "https://join-hestia.lovable.app/",
           },
         });
+        console.log("[Hestia Auth] Signup result:", { data, error: err });
         if (err) throw err;
         // Create profile in users table
         if (data.user) {
@@ -763,14 +766,15 @@ const AuthPage = ({ lang, onAuth, confirmationBanner }) => {
             name,
             is_premium: false,
             hestia_points: 0,
-          });
+          }).then(res => console.log("[Hestia Auth] Profile upsert:", res));
         }
         // Show success message instead of redirecting
         setSignupSuccess(true);
         setSignupEmail(email);
       }
     } catch (err) {
-      setError(translateError(err.message));
+      console.error("[Hestia Auth] Error:", err);
+      setError(translateError(err.message || "Une erreur est survenue. Réessayez."));
     } finally {
       setLoading(false);
     }
